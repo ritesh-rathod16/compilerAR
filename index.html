@@ -3,263 +3,1324 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Python Code Runner</title>
+    <title>Advanced Python Code Runner with AI</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3f37c9;
+            --accent-color: #4895ef;
+            --dark-color: #1a1a2e;
+            --light-color: #f8f9fa;
+            --success-color: #4cc9f0;
+            --warning-color: #f8961e;
+            --danger-color: #f72585;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f5f5f5;
+            background-color: #f5f7fa;
             color: #333;
+            line-height: 1.6;
         }
-        .container {
-            display: flex;
-            max-width: 1200px;
-            margin: 20px auto;
-            padding: 20px;
-            gap: 20px;
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--primary-color);
         }
-        .editor-container, .output-container {
-            flex: 1;
+
+        .navbar {
+            box-shadow: var(--box-shadow);
             background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
         }
-        .header {
-            background-color: #2c3e50;
+
+        .main-container {
+            max-width: 1800px;
+            margin: 20px auto;
+            padding: 0 15px;
+        }
+
+        .editor-container, .output-container, .ai-container {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            height: calc(100vh - 180px);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .panel-header {
+            background-color: var(--dark-color);
             color: white;
-            padding: 10px 15px;
-            font-weight: bold;
+            padding: 12px 15px;
+            border-top-left-radius: var(--border-radius);
+            border-top-right-radius: var(--border-radius);
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
-        .run-btn {
-            background-color: #27ae60;
-            color: white;
+
+        .panel-title {
+            font-weight: 600;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .panel-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-action {
+            background-color: transparent;
             border: none;
-            padding: 5px 15px;
+            color: white;
+            padding: 4px 8px;
             border-radius: 4px;
             cursor: pointer;
-            font-weight: bold;
-            transition: background-color 0.2s;
+            transition: var(--transition);
+            font-size: 0.9rem;
         }
-        .run-btn:hover {
-            background-color: #2ecc71;
+
+        .btn-action:hover {
+            background-color: rgba(255, 255, 255, 0.1);
         }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+        }
+
+        .btn-success {
+            background-color: var(--success-color);
+            border-color: var(--success-color);
+        }
+
+        .btn-warning {
+            background-color: var(--warning-color);
+            border-color: var(--warning-color);
+        }
+
+        .btn-danger {
+            background-color: var(--danger-color);
+            border-color: var(--danger-color);
+        }
+
         #editor {
             width: 100%;
-            height: 500px;
+            height: 100%;
             border: none;
             padding: 15px;
-            font-family: 'Consolas', 'Monaco', monospace;
+            font-family: 'Fira Code', 'Consolas', monospace;
             font-size: 14px;
             line-height: 1.5;
             resize: none;
             outline: none;
             white-space: pre;
+            background-color: #1e1e1e;
+            color: #d4d4d4;
+            border-radius: 0 0 var(--border-radius) var(--border-radius);
         }
+
         #output {
             width: 100%;
-            height: 500px;
+            height: 100%;
             padding: 15px;
             font-family: 'Consolas', 'Monaco', monospace;
             font-size: 14px;
             line-height: 1.5;
             overflow-y: auto;
-            background-color: #f8f9fa;
-            color: #333;
+            background-color: #1e1e1e;
+            color: #d4d4d4;
+            border-radius: 0 0 var(--border-radius) var(--border-radius);
         }
+
         .input-prompt {
-            padding: 10px 15px;
-            background-color: #e8f4fc;
-            border-top: 1px solid #ddd;
+            padding: 15px;
+            background-color: #252526;
+            border-top: 1px solid #333;
             display: none;
         }
+
+        .input-prompt label {
+            display: block;
+            margin-bottom: 8px;
+            color: #d4d4d4;
+        }
+
         .input-prompt input {
             width: 100%;
-            padding: 8px;
-            border: 1px solid #ddd;
+            padding: 8px 12px;
+            border: 1px solid #333;
             border-radius: 4px;
+            background-color: #2d2d2d;
+            color: #d4d4d4;
         }
+
         .submit-input {
-            background-color: #3498db;
+            background-color: var(--accent-color);
             color: white;
             border: none;
-            padding: 5px 10px;
+            padding: 6px 12px;
             border-radius: 4px;
-            margin-top: 5px;
+            margin-top: 10px;
             cursor: pointer;
+            transition: var(--transition);
         }
+
         .submit-input:hover {
-            background-color: #2980b9;
+            background-color: #3a86ff;
         }
-        .features {
-            max-width: 1200px;
-            margin: 20px auto;
-            padding: 20px;
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-        .features h2 {
-            color: #2c3e50;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 10px;
-        }
-        .feature-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 15px;
-            margin-top: 15px;
-        }
-        .feature-item {
-            background-color: #f8f9fa;
+
+        .ai-conversation {
+            height: 100%;
+            overflow-y: auto;
             padding: 15px;
-            border-radius: 5px;
-            border-left: 4px solid #3498db;
+            background-color: #1e1e1e;
+            color: #d4d4d4;
+            border-radius: 0 0 var(--border-radius) var(--border-radius);
         }
-        .feature-item h3 {
-            margin-top: 0;
-            color: #2c3e50;
+
+        .ai-message {
+            margin-bottom: 15px;
+            padding: 10px 15px;
+            border-radius: 8px;
+            max-width: 80%;
         }
-        @media (max-width: 768px) {
-            .container {
-                flex-direction: column;
+
+        .ai-user {
+            background-color: #2d5278;
+            margin-left: auto;
+            border-bottom-right-radius: 4px;
+        }
+
+        .ai-bot {
+            background-color: #383838;
+            margin-right: auto;
+            border-bottom-left-radius: 4px;
+        }
+
+        .ai-input {
+            display: flex;
+            padding: 15px;
+            background-color: #252526;
+            border-top: 1px solid #333;
+        }
+
+        .ai-input textarea {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #333;
+            border-radius: 4px;
+            background-color: #2d2d2d;
+            color: #d4d4d4;
+            resize: none;
+            height: 80px;
+        }
+
+        .ai-input button {
+            margin-left: 10px;
+            height: 80px;
+            width: 80px;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .ai-input button:hover {
+            background-color: #3a86ff;
+        }
+
+        .tab-content {
+            height: calc(100% - 45px);
+        }
+
+        .nav-tabs {
+            border-bottom: 1px solid #333;
+        }
+
+        .nav-tabs .nav-link {
+            color: #d4d4d4;
+            background-color: #252526;
+            border: 1px solid #333;
+            border-bottom: none;
+            border-radius: 0;
+            padding: 8px 15px;
+        }
+
+        .nav-tabs .nav-link.active {
+            background-color: #1e1e1e;
+            color: white;
+            border-color: #333 #333 transparent #333;
+        }
+
+        .nav-tabs .nav-link:hover {
+            border-color: #333 #333 transparent #333;
+        }
+
+        .status-bar {
+            background-color: #252526;
+            color: #d4d4d4;
+            padding: 5px 15px;
+            font-size: 0.8rem;
+            display: flex;
+            justify-content: space-between;
+            border-radius: 0 0 var(--border-radius) var(--border-radius);
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .snippets-list {
+            height: 100%;
+            overflow-y: auto;
+            padding: 15px;
+            background-color: #1e1e1e;
+            color: #d4d4d4;
+        }
+
+        .snippet-item {
+            padding: 10px;
+            margin-bottom: 10px;
+            background-color: #252526;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .snippet-item:hover {
+            background-color: #2d2d2d;
+        }
+
+        .snippet-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .snippet-desc {
+            font-size: 0.8rem;
+            color: #a0a0a0;
+        }
+
+        .file-explorer {
+            height: 100%;
+            overflow-y: auto;
+            padding: 15px;
+            background-color: #1e1e1e;
+            color: #d4d4d4;
+        }
+
+        .file-item {
+            padding: 8px 0;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .file-item:hover {
+            color: white;
+        }
+
+        .settings-panel {
+            padding: 15px;
+            height: 100%;
+            overflow-y: auto;
+            background-color: #1e1e1e;
+            color: #d4d4d4;
+        }
+
+        .settings-group {
+            margin-bottom: 20px;
+        }
+
+        .settings-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid #333;
+        }
+
+        .setting-item {
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .form-check-input:checked {
+            background-color: var(--accent-color);
+            border-color: var(--accent-color);
+        }
+
+        .form-select, .form-control {
+            background-color: #2d2d2d;
+            color: #d4d4d4;
+            border: 1px solid #333;
+        }
+
+        .form-select:focus, .form-control:focus {
+            background-color: #2d2d2d;
+            color: #d4d4d4;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 0.25rem rgba(58, 134, 255, 0.25);
+        }
+
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1100;
+        }
+
+        .toast {
+            background-color: #252526;
+            color: #d4d4d4;
+            border: 1px solid #333;
+        }
+
+        .toast-header {
+            background-color: #2d2d2d;
+            color: #d4d4d4;
+            border-bottom: 1px solid #333;
+        }
+
+        .dropdown-menu {
+            background-color: #252526;
+            border: 1px solid #333;
+        }
+
+        .dropdown-item {
+            color: #d4d4d4;
+        }
+
+        .dropdown-item:hover {
+            background-color: #2d2d2d;
+            color: white;
+        }
+
+        .dropdown-divider {
+            border-top: 1px solid #333;
+        }
+
+        .progress {
+            background-color: #2d2d2d;
+            height: 6px;
+        }
+
+        .progress-bar {
+            background-color: var(--accent-color);
+        }
+
+        .tooltip-inner {
+            background-color: #252526;
+            color: #d4d4d4;
+            border: 1px solid #333;
+        }
+
+        .bs-tooltip-auto[data-popper-placement^=top] .tooltip-arrow::before, 
+        .bs-tooltip-top .tooltip-arrow::before {
+            border-top-color: #333;
+        }
+
+        @media (max-width: 1200px) {
+            .editor-container, .output-container, .ai-container {
+                height: 500px;
             }
+        }
+
+        /* Syntax highlighting for output */
+        .output-error {
+            color: #f92672;
+        }
+
+        .output-warning {
+            color: #fd971f;
+        }
+
+        .output-success {
+            color: #a6e22e;
+        }
+
+        .output-info {
+            color: #66d9ef;
+        }
+
+        /* Loading animation */
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .spinner {
+            animation: spin 1s linear infinite;
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #2d2d2d;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #555;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #666;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="editor-container">
-            <div class="header">
-                <span>Python Editor</span>
-                <button class="run-btn" id="runBtn">Run</button>
-            </div>
-            <textarea id="editor" spellcheck="false"># Write your Python code here
-print("Hello, World!")</textarea>
-            <div class="input-prompt" id="inputPrompt">
-                <p id="promptText">Enter input:</p>
-                <input type="text" id="userInput">
-                <button class="submit-input" id="submitInput">Submit</button>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-code me-2"></i>PyAI Runner
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="fileDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-file-code me-1"></i> File
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#" id="newFile"><i class="fas fa-file me-2"></i>New</a></li>
+                            <li><a class="dropdown-item" href="#" id="openFile"><i class="fas fa-folder-open me-2"></i>Open</a></li>
+                            <li><a class="dropdown-item" href="#" id="saveFile"><i class="fas fa-save me-2"></i>Save</a></li>
+                            <li><a class="dropdown-item" href="#" id="saveAsFile"><i class="fas fa-save me-2"></i>Save As</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#" id="exportPDF"><i class="fas fa-file-pdf me-2"></i>Export as PDF</a></li>
+                            <li><a class="dropdown-item" href="#" id="exportHTML"><i class="fas fa-file-code me-2"></i>Export as HTML</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="editDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-edit me-1"></i> Edit
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#" id="undoAction"><i class="fas fa-undo me-2"></i>Undo</a></li>
+                            <li><a class="dropdown-item" href="#" id="redoAction"><i class="fas fa-redo me-2"></i>Redo</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#" id="cutAction"><i class="fas fa-cut me-2"></i>Cut</a></li>
+                            <li><a class="dropdown-item" href="#" id="copyAction"><i class="fas fa-copy me-2"></i>Copy</a></li>
+                            <li><a class="dropdown-item" href="#" id="pasteAction"><i class="fas fa-paste me-2"></i>Paste</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#" id="findAction"><i class="fas fa-search me-2"></i>Find</a></li>
+                            <li><a class="dropdown-item" href="#" id="replaceAction"><i class="fas fa-exchange-alt me-2"></i>Replace</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="viewDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-eye me-1"></i> View
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#" id="zoomIn"><i class="fas fa-search-plus me-2"></i>Zoom In</a></li>
+                            <li><a class="dropdown-item" href="#" id="zoomOut"><i class="fas fa-search-minus me-2"></i>Zoom Out</a></li>
+                            <li><a class="dropdown-item" href="#" id="resetZoom"><i class="fas fa-search me-2"></i>Reset Zoom</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#" id="toggleTheme"><i class="fas fa-moon me-2"></i>Toggle Theme</a></li>
+                            <li><a class="dropdown-item" href="#" id="toggleFullscreen"><i class="fas fa-expand me-2"></i>Toggle Fullscreen</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="runDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-play me-1"></i> Run
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#" id="runCode"><i class="fas fa-play me-2"></i>Run</a></li>
+                            <li><a class="dropdown-item" href="#" id="debugCode"><i class="fas fa-bug me-2"></i>Debug</a></li>
+                            <li><a class="dropdown-item" href="#" id="stopExecution"><i class="fas fa-stop me-2"></i>Stop</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#" id="runSelection"><i class="fas fa-code me-2"></i>Run Selection</a></li>
+                            <li><a class="dropdown-item" href="#" id="formatCode"><i class="fas fa-indent me-2"></i>Format Code</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="aiDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-robot me-1"></i> AI Assistant
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#" id="aiExplain"><i class="fas fa-question-circle me-2"></i>Explain Code</a></li>
+                            <li><a class="dropdown-item" href="#" id="aiOptimize"><i class="fas fa-tachometer-alt me-2"></i>Optimize Code</a></li>
+                            <li><a class="dropdown-item" href="#" id="aiDebug"><i class="fas fa-bug me-2"></i>Debug Code</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#" id="aiGenerate"><i class="fas fa-magic me-2"></i>Generate Code</a></li>
+                            <li><a class="dropdown-item" href="#" id="aiConvert"><i class="fas fa-exchange-alt me-2"></i>Convert Code</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="helpDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-question-circle me-1"></i> Help
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#" id="showDocs"><i class="fas fa-book me-2"></i>Documentation</a></li>
+                            <li><a class="dropdown-item" href="#" id="showShortcuts"><i class="fas fa-keyboard me-2"></i>Keyboard Shortcuts</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#" id="showAbout"><i class="fas fa-info-circle me-2"></i>About</a></li>
+                        </ul>
+                    </li>
+                </ul>
+                <div class="d-flex">
+                    <button class="btn btn-outline-primary me-2" id="saveSnippet">
+                        <i class="fas fa-bookmark me-1"></i> Save Snippet
+                    </button>
+                    <button class="btn btn-primary" id="runButton">
+                        <i class="fas fa-play me-1"></i> Run
+                    </button>
+                </div>
             </div>
         </div>
-        <div class="output-container">
-            <div class="header">
-                <span>Output</span>
+    </nav>
+
+    <div class="main-container">
+        <div class="row g-3">
+            <div class="col-lg-6">
+                <div class="editor-container">
+                    <div class="panel-header">
+                        <div class="panel-title">
+                            <i class="fas fa-file-code"></i>
+                            <span>script.py</span>
+                        </div>
+                        <div class="panel-actions">
+                            <button class="btn-action" title="Save" id="editorSave">
+                                <i class="fas fa-save"></i>
+                            </button>
+                            <button class="btn-action" title="Run" id="editorRun">
+                                <i class="fas fa-play"></i>
+                            </button>
+                            <button class="btn-action" title="Format" id="editorFormat">
+                                <i class="fas fa-indent"></i>
+                            </button>
+                            <div class="dropdown">
+                                <button class="btn-action dropdown-toggle" type="button" id="editorMore" data-bs-toggle="dropdown">
+                                    <i class="fas fa-ellipsis-h"></i>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li><a class="dropdown-item" href="#" id="editorSettings"><i class="fas fa-cog me-2"></i>Settings</a></li>
+                                    <li><a class="dropdown-item" href="#" id="editorThemes"><i class="fas fa-palette me-2"></i>Themes</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item" href="#" id="editorShare"><i class="fas fa-share-alt me-2"></i>Share</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <textarea id="editor"># Welcome to PyAI Runner!
+# Write your Python code here and click Run to execute it
+
+def fibonacci(n):
+    """Return the nth Fibonacci number."""
+    if n <= 1:
+        return n
+    else:
+        return fibonacci(n-1) + fibonacci(n-2)
+
+# Print first 10 Fibonacci numbers
+print("First 10 Fibonacci numbers:")
+for i in range(10):
+    print(f"Fibonacci({i}) = {fibonacci(i)}")
+
+# Example of user input
+name = input("What's your name? ")
+print(f"Hello, {name}! Welcome to Python programming.")
+
+# AI Assistant can help you with:
+# - Explaining code
+# - Debugging errors
+# - Optimizing performance
+# - Generating new code</textarea>
+                    <div class="input-prompt" id="inputPrompt">
+                        <label id="promptText">Enter input:</label>
+                        <input type="text" id="userInput" class="form-control">
+                        <button class="submit-input mt-2" id="submitInput">
+                            <i class="fas fa-paper-plane me-1"></i> Submit
+                        </button>
+                    </div>
+                    <div class="status-bar">
+                        <div class="status-item">
+                            <i class="fas fa-code"></i>
+                            <span>Python 3.11</span>
+                        </div>
+                        <div class="status-item">
+                            <i class="fas fa-ruler-combined"></i>
+                            <span>Ln 1, Col 1</span>
+                        </div>
+                        <div class="status-item">
+                            <i class="fas fa-keyboard"></i>
+                            <span>UTF-8</span>
+                        </div>
+                        <div class="status-item">
+                            <i class="fas fa-file"></i>
+                            <span>CRLF</span>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <pre id="output">Click "Run" to execute your code</pre>
+            <div class="col-lg-6">
+                <div class="output-container">
+                    <ul class="nav nav-tabs" id="outputTabs">
+                        <li class="nav-item">
+                            <a class="nav-link active" data-bs-toggle="tab" href="#outputTab">
+                                <i class="fas fa-terminal me-1"></i> Output
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-bs-toggle="tab" href="#problemsTab">
+                                <i class="fas fa-exclamation-circle me-1"></i> Problems
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-bs-toggle="tab" href="#debugTab">
+                                <i class="fas fa-bug me-1"></i> Debug
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-bs-toggle="tab" href="#snippetsTab">
+                                <i class="fas fa-bookmark me-1"></i> Snippets
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-bs-toggle="tab" href="#filesTab">
+                                <i class="fas fa-folder me-1"></i> Files
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-bs-toggle="tab" href="#settingsTab">
+                                <i class="fas fa-cog me-1"></i> Settings
+                            </a>
+                        </li>
+                    </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane fade show active" id="outputTab">
+                            <pre id="output">Ready to execute Python code. Click the Run button or press F5.</pre>
+                        </div>
+                        <div class="tab-pane fade" id="problemsTab">
+                            <div class="snippets-list" id="problemsList">
+                                <div class="alert alert-info">
+                                    No problems detected in your code.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="debugTab">
+                            <div class="snippets-list" id="debugConsole">
+                                <div class="alert alert-info">
+                                    Debugger is not active. Start debugging session to see variables and stack traces.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="snippetsTab">
+                            <div class="snippets-list" id="snippetsList">
+                                <div class="snippet-item">
+                                    <div class="snippet-title">Fibonacci Sequence</div>
+                                    <div class="snippet-desc">Calculates Fibonacci numbers recursively</div>
+                                </div>
+                                <div class="snippet-item">
+                                    <div class="snippet-title">Quick Sort</div>
+                                    <div class="snippet-desc">Implementation of quick sort algorithm</div>
+                                </div>
+                                <div class="snippet-item">
+                                    <div class="snippet-title">File Reader</div>
+                                    <div class="snippet-desc">Reads and processes text files</div>
+                                </div>
+                                <div class="snippet-item">
+                                    <div class="snippet-title">API Client</div>
+                                    <div class="snippet-desc">Makes HTTP requests to REST APIs</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="filesTab">
+                            <div class="file-explorer" id="fileExplorer">
+                                <div class="file-item">
+                                    <i class="fas fa-folder"></i>
+                                    <span>src</span>
+                                </div>
+                                <div class="file-item">
+                                    <i class="fas fa-file-code"></i>
+                                    <span>main.py</span>
+                                </div>
+                                <div class="file-item">
+                                    <i class="fas fa-file-code"></i>
+                                    <span>utils.py</span>
+                                </div>
+                                <div class="file-item">
+                                    <i class="fas fa-file-alt"></i>
+                                    <span>README.md</span>
+                                </div>
+                                <div class="file-item">
+                                    <i class="fas fa-file"></i>
+                                    <span>requirements.txt</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="settingsTab">
+                            <div class="settings-panel">
+                                <div class="settings-group">
+                                    <div class="settings-title">Editor Settings</div>
+                                    <div class="setting-item">
+                                        <label for="fontSize">Font Size</label>
+                                        <select class="form-select form-select-sm" id="fontSize">
+                                            <option>12</option>
+                                            <option selected>14</option>
+                                            <option>16</option>
+                                            <option>18</option>
+                                            <option>20</option>
+                                        </select>
+                                    </div>
+                                    <div class="setting-item">
+                                        <label for="tabSize">Tab Size</label>
+                                        <select class="form-select form-select-sm" id="tabSize">
+                                            <option>2</option>
+                                            <option selected>4</option>
+                                            <option>8</option>
+                                        </select>
+                                    </div>
+                                    <div class="setting-item form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="lineNumbers" checked>
+                                        <label class="form-check-label" for="lineNumbers">Show Line Numbers</label>
+                                    </div>
+                                    <div class="setting-item form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="autoComplete" checked>
+                                        <label class="form-check-label" for="autoComplete">Enable Auto-complete</label>
+                                    </div>
+                                </div>
+                                <div class="settings-group">
+                                    <div class="settings-title">Execution Settings</div>
+                                    <div class="setting-item">
+                                        <label for="pythonVersion">Python Version</label>
+                                        <select class="form-select form-select-sm" id="pythonVersion">
+                                            <option>3.8</option>
+                                            <option>3.9</option>
+                                            <option>3.10</option>
+                                            <option selected>3.11</option>
+                                        </select>
+                                    </div>
+                                    <div class="setting-item form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="autoRun" checked>
+                                        <label class="form-check-label" for="autoRun">Auto-run after save</label>
+                                    </div>
+                                    <div class="setting-item form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="showExecutionTime" checked>
+                                        <label class="form-check-label" for="showExecutionTime">Show execution time</label>
+                                    </div>
+                                </div>
+                                <div class="settings-group">
+                                    <div class="settings-title">AI Assistant Settings</div>
+                                    <div class="setting-item">
+                                        <label for="aiModel">AI Model</label>
+                                        <select class="form-select form-select-sm" id="aiModel">
+                                            <option selected>GPT-4 Turbo</option>
+                                            <option>GPT-4</option>
+                                            <option>GPT-3.5 Turbo</option>
+                                            <option>Claude 3</option>
+                                        </select>
+                                    </div>
+                                    <div class="setting-item">
+                                        <label for="apiKey">API Key</label>
+                                        <input type="password" class="form-control form-control-sm" id="apiKey" placeholder="Enter your API key">
+                                    </div>
+                                    <div class="setting-item form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="autoExplain" checked>
+                                        <label class="form-check-label" for="autoExplain">Auto-explain complex code</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <div class="features">
-        <h2>Key Features</h2>
-        <div class="feature-grid">
-            <div class="feature-item">
-                <h3>Online Python Execution</h3>
-                <p>Write and run Python code instantly without installing Python.</p>
+    <div class="toast-container">
+        <div class="toast" id="notificationToast">
+            <div class="toast-header">
+                <strong class="me-auto">Notification</strong>
+                <small>Just now</small>
+                <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
             </div>
-            <div class="feature-item">
-                <h3>User-Friendly Interface</h3>
-                <p>Simple and clean editor with responsive design.</p>
-            </div>
-            <div class="feature-item">
-                <h3>Input/Output Support</h3>
-                <p>Accepts user input during runtime and displays output clearly.</p>
-            </div>
-            <div class="feature-item">
-                <h3>No Registration Required</h3>
-                <p>Free to use without mandatory sign-up.</p>
-            </div>
-            <div class="feature-item">
-                <h3>Basic Debugging</h3>
-                <p>Error messages are displayed if the code has issues.</p>
-            </div>
-            <div class="feature-item">
-                <h3>Mobile-Friendly</h3>
-                <p>Works on smartphones and tablets.</p>
+            <div class="toast-body">
+                Welcome to PyAI Runner!
             </div>
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.4.0/axios.min.js"></script>
     <script>
-        document.getElementById('runBtn').addEventListener('click', runCode);
-        document.getElementById('submitInput').addEventListener('click', submitInput);
-        
-        let inputResolver;
-        let currentInputPromise;
-        
-        function runCode() {
-            const code = document.getElementById('editor').value;
-            const outputElement = document.getElementById('output');
-            outputElement.innerHTML = 'Running...';
+        // Initialize components
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize Bootstrap components
+            const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
             
-            // Mock execution environment
-            mockExecutePython(code, outputElement);
-        }
-        
-        function mockExecutePython(code, outputElement) {
-            // This is a mock implementation - in a real app, you'd send to a server
-            outputElement.innerHTML = '';
+            const toastEl = document.getElementById('notificationToast');
+            const toast = new bootstrap.Toast(toastEl);
+            toast.show();
+
+            // Initialize tabs
+            const tabEls = document.querySelectorAll('a[data-bs-toggle="tab"]');
+            tabEls.forEach(tabEl => {
+                tabEl.addEventListener('shown.bs.tab', function (event) {
+                    // Handle tab change if needed
+                });
+            });
+
+            // Initialize editor functionality
+            setupEditor();
+            setupAI();
+            setupFileHandling();
+            setupExecution();
+            setupSettings();
+        });
+
+        // Editor functionality
+        function setupEditor() {
+            const editor = document.getElementById('editor');
+            const output = document.getElementById('output');
+            const runButton = document.getElementById('runButton');
+            const editorRun = document.getElementById('editorRun');
+            const editorSave = document.getElementById('editorSave');
+            const editorFormat = document.getElementById('editorFormat');
+            const inputPrompt = document.getElementById('inputPrompt');
+            const userInput = document.getElementById('userInput');
+            const submitInput = document.getElementById('submitInput');
             
-            // Capture console.log
-            const originalConsoleLog = console.log;
-            console.log = function(...args) {
-                originalConsoleLog.apply(console, args);
-                outputElement.innerHTML += args.join(' ') + '\n';
-            };
+            let inputResolver;
+            let currentInputPromise;
+
+            // Track cursor position
+            editor.addEventListener('keyup', updateCursorPosition);
+            editor.addEventListener('click', updateCursorPosition);
             
-            // Capture errors
-            try {
-                // This is a simplified approach - in reality you'd need a proper Python interpreter
-                if (code.includes('input(')) {
-                    // Mock input handling
-                    const inputMatches = code.match(/input\(([^)]*)\)/g);
-                    if (inputMatches) {
-                        for (const inputCall of inputMatches) {
-                            const promptText = inputCall.match(/input\((.*)\)/)[1];
-                            document.getElementById('promptText').textContent = 
-                                promptText ? promptText.replace(/['"]/g, '') : 'Enter input:';
-                            document.getElementById('inputPrompt').style.display = 'block';
-                            
-                            // Wait for user input
-                            currentInputPromise = new Promise(resolve => {
-                                inputResolver = resolve;
-                            });
-                            
-                            // In a real implementation, you'd await the input
-                            // This is just a mock to show the UI flow
+            function updateCursorPosition() {
+                const text = editor.value;
+                const cursorPos = editor.selectionStart;
+                
+                // Calculate line number
+                const lines = text.substring(0, cursorPos).split('\n');
+                const lineNumber = lines.length;
+                const columnNumber = lines[lines.length - 1].length + 1;
+                
+                // Update status bar
+                document.querySelector('.status-item:nth-child(2) span').textContent = `Ln ${lineNumber}, Col ${columnNumber}`;
+            }
+
+            // Run code
+            function runCode() {
+                const code = editor.value;
+                output.innerHTML = '<span class="output-info">Executing code...</span>';
+                
+                // Mock execution - in a real app, this would call a backend API
+                setTimeout(() => {
+                    mockExecutePython(code);
+                }, 500);
+            }
+
+            // Mock Python execution
+            function mockExecutePython(code) {
+                output.innerHTML = '';
+                
+                try {
+                    // Check for input() calls
+                    if (code.includes('input(')) {
+                        const inputMatches = code.match(/input\(([^)]*)\)/g);
+                        if (inputMatches) {
+                            handleInput(inputMatches[0]);
                             return;
                         }
                     }
+                    
+                    // Mock output for demo purposes
+                    const mockOutput = `First 10 Fibonacci numbers:
+Fibonacci(0) = 0
+Fibonacci(1) = 1
+Fibonacci(2) = 1
+Fibonacci(3) = 2
+Fibonacci(4) = 3
+Fibonacci(5) = 5
+Fibonacci(6) = 8
+Fibonacci(7) = 13
+Fibonacci(8) = 21
+Fibonacci(9) = 34
+What's your name? `;
+                    
+                    output.innerHTML = mockOutput;
+                    
+                    // Show input prompt for the name
+                    document.getElementById('promptText').textContent = "What's your name?";
+                    inputPrompt.style.display = 'block';
+                    
+                } catch (error) {
+                    output.innerHTML = `<span class="output-error">Error: ${error.message}</span>`;
+                }
+            }
+
+            // Handle input() calls
+            function handleInput(promptText) {
+                const cleanPrompt = promptText.replace(/input\((['"]?)(.*?)\1\)/, '$2') || 'Enter input:';
+                document.getElementById('promptText').textContent = cleanPrompt;
+                inputPrompt.style.display = 'block';
+                
+                currentInputPromise = new Promise(resolve => {
+                    inputResolver = resolve;
+                });
+            }
+
+            // Submit user input
+            function submitUserInput() {
+                const inputValue = userInput.value;
+                inputPrompt.style.display = 'none';
+                userInput.value = '';
+                
+                if (inputResolver) {
+                    inputResolver(inputValue);
+                    output.innerHTML += `${inputValue}\nHello, ${inputValue}! Welcome to Python programming.\n\n<span class="output-success">Program finished with exit code 0</span>`;
+                }
+            }
+
+            // Format code
+            function formatCode() {
+                // In a real app, this would use a formatter like autopep8 or black
+                // For demo, we just add proper indentation
+                const code = editor.value;
+                const lines = code.split('\n');
+                let indent = 0;
+                let formatted = [];
+                
+                for (let line of lines) {
+                    line = line.trim();
+                    if (line.endsWith(':')) {
+                        formatted.push(' '.repeat(indent * 4) + line);
+                        indent++;
+                    } else if (line.startsWith('return') || line.startsWith('pass') || line.startsWith('break') || line.startsWith('continue')) {
+                        indent--;
+                        formatted.push(' '.repeat(indent * 4) + line);
+                    } else {
+                        formatted.push(' '.repeat(indent * 4) + line);
+                    }
                 }
                 
-                // Mock execution - in reality this would be done server-side
-                const mockResult = `Output for: ${code.substring(0, 50)}${code.length > 50 ? '...' : ''}`;
-                outputElement.innerHTML = mockResult + '\n\n(Note: This is a mock implementation. In a real app, code would be executed server-side.)';
-            } catch (error) {
-                outputElement.innerHTML = 'Error: ' + error.message;
-            } finally {
-                console.log = originalConsoleLog;
+                editor.value = formatted.join('\n');
+                showNotification('Code formatted successfully');
             }
-        }
-        
-        function submitInput() {
-            const inputValue = document.getElementById('userInput').value;
-            document.getElementById('inputPrompt').style.display = 'none';
-            document.getElementById('userInput').value = '';
-            
-            if (inputResolver) {
-                inputResolver(inputValue);
-                inputResolver = null;
+
+            // Show notification
+            function showNotification(message) {
+                const toastBody = document.querySelector('.toast-body');
+                toastBody.textContent = message;
                 
-                // In a real implementation, you'd continue execution with the input value
-                const outputElement = document.getElementById('output');
-                outputElement.innerHTML += `User input: ${inputValue}\n`;
-                outputElement.innerHTML += '\n(Note: In a real implementation, execution would continue with this input.)';
+                const toast = new bootstrap.Toast(document.getElementById('notificationToast'));
+                toast.show();
             }
+
+            // Event listeners
+            runButton.addEventListener('click', runCode);
+            editorRun.addEventListener('click', runCode);
+            editorSave.addEventListener('click', () => showNotification('Code saved (mock)'));
+            editorFormat.addEventListener('click', formatCode);
+            submitInput.addEventListener('click', submitUserInput);
+            userInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') submitUserInput();
+            });
+        }
+
+        // AI Assistant functionality
+        function setupAI() {
+            const aiExplain = document.getElementById('aiExplain');
+            const aiOptimize = document.getElementById('aiOptimize');
+            const aiDebug = document.getElementById('aiDebug');
+            const aiGenerate = document.getElementById('aiGenerate');
+            const aiConvert = document.getElementById('aiConvert');
+            const aiConversation = document.createElement('div');
+            aiConversation.className = 'ai-conversation';
+            document.getElementById('outputTab').appendChild(aiConversation);
+            
+            // Mock AI responses
+            const aiResponses = {
+                explain: `The Fibonacci sequence is a series of numbers where each number is the sum of the two preceding ones. In this code:
+                
+1. The fibonacci() function uses recursion to calculate the nth Fibonacci number.
+2. The base case is when n is 0 or 1, returning n directly.
+3. For larger numbers, it calls itself with n-1 and n-2 and sums the results.
+4. The loop prints the first 10 Fibonacci numbers by calling fibonacci(i) for i from 0 to 9.
+
+Recursion is elegant but can be inefficient for large n due to repeated calculations.`,
+                
+                optimize: `Here's an optimized version using memoization to avoid redundant calculations:
+
+<pre>from functools import lru_cache
+
+@lru_cache(maxsize=None)
+def fibonacci(n):
+    """Return the nth Fibonacci number with memoization."""
+    if n <= 1:
+        return n
+    return fibonacci(n-1) + fibonacci(n-2)</pre>
+
+This version:
+1. Uses Python's built-in lru_cache decorator to cache results
+2. Dramatically improves performance for larger n
+3. Maintains the same simple recursive approach`,
+                
+                debug: `The code appears correct, but here are some potential improvements:
+
+1. Add input validation for negative numbers
+2. Consider adding a docstring explaining the function's purpose
+3. For very large n, recursion might hit Python's recursion limit
+
+Example improvement:
+<pre>def fibonacci(n):
+    """Return the nth Fibonacci number.
+    Args:
+        n: non-negative integer
+    Raises:
+        ValueError: if n is negative
+    """
+    if n < 0:
+        raise ValueError("n must be non-negative")
+    if n <= 1:
+        return n
+    return fibonacci(n-1) + fibonacci(n-2)</pre>`,
+                
+                generate: `Here's a Python function to calculate factorial using recursion:
+
+<pre>def factorial(n):
+    """Calculate factorial of n recursively."""
+    if n == 0:
+        return 1
+    return n * factorial(n - 1)
+
+# Example usage
+print(factorial(5))  # Output: 120</pre>
+
+Key points:
+1. Base case: factorial(0) is 1
+2. Recursive case: n * factorial(n-1)
+3. Works for non-negative integers`,
+                
+                convert: `Here's the Fibonacci function converted to an iterative approach:
+
+<pre>def fibonacci(n):
+    """Return the nth Fibonacci number iteratively."""
+    a, b = 0, 1
+    for _ in range(n):
+        a, b = b, a + b
+    return a</pre>
+
+Advantages:
+1. No recursion limit issues
+2. More memory efficient
+3. Faster for large n
+4. Same result as recursive version`
+            };
+            
+            // Add message to AI conversation
+            function addAIMessage(role, content) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `ai-message ai-${role}`;
+                messageDiv.innerHTML = content;
+                aiConversation.appendChild(messageDiv);
+                aiConversation.scrollTop = aiConversation.scrollHeight;
+            }
+            
+            // Handle AI actions
+            function handleAIAction(action) {
+                const code = document.getElementById('editor').value;
+                
+                // Show loading
+                addAIMessage('bot', '<i class="fas fa-spinner spinner"></i> Thinking...');
+                
+                // Simulate API call delay
+                setTimeout(() => {
+                    // Remove loading
+                    aiConversation.removeChild(aiConversation.lastChild);
+                    
+                    // Add user message
+                    addAIMessage('user', `<pre>${code}</pre>`);
+                    
+                    // Add AI response
+                    addAIMessage('bot', aiResponses[action].replace(/<pre>/g, '<pre class="hljs">'));
+                    
+                    // Highlight code in response
+                    document.querySelectorAll('.ai-conversation pre code').forEach((block) => {
+                        hljs.highlightElement(block);
+                    });
+                }, 1500);
+            }
+            
+            // Event listeners
+            aiExplain.addEventListener('click', () => handleAIAction('explain'));
+            aiOptimize.addEventListener('click', () => handleAIAction('optimize'));
+            aiDebug.addEventListener('click', () => handleAIAction('debug'));
+            aiGenerate.addEventListener('click', () => handleAIAction('generate'));
+            aiConvert.addEventListener('click', () => handleAIAction('convert'));
+        }
+
+        // File handling functionality
+        function setupFileHandling() {
+            const newFile = document.getElementById('newFile');
+            const openFile = document.getElementById('openFile');
+            const saveFile = document.getElementById('saveFile');
+            const saveAsFile = document.getElementById('saveAsFile');
+            const exportPDF = document.getElementById('exportPDF');
+            const exportHTML = document.getElementById('exportHTML');
+            
+            // Mock file operations
+            newFile.addEventListener('click', () => {
+                document.getElementById('editor').value = '# New Python script\nprint("Hello, World!")';
+                showNotification('New file created');
+            });
+            
+            openFile.addEventListener('click', () => {
+                showNotification('File open dialog would appear here');
+            });
+            
+            saveFile.addEventListener('click', () => {
+                showNotification('File saved successfully');
+            });
+            
+            saveAsFile.addEventListener('click', () => {
+                showNotification('Save as dialog would appear here');
+            });
+            
+            exportPDF.addEventListener('click', () => {
+                showNotification('Export to PDF would generate a PDF file');
+            });
+            
+            exportHTML.addEventListener('click', () => {
+                showNotification('Export to HTML would generate an HTML file');
+            });
+        }
+
+        // Code execution functionality
+        function setupExecution() {
+            const debugCode = document.getElementById('debugCode');
+            const stopExecution = document.getElementById('stopExecution');
+            const runSelection = document.getElementById('runSelection');
+            
+            // Mock debugger
+            debugCode.addEventListener('click', () => {
+                showNotification('Debugger started (mock)');
+                document.getElementById('debugConsole').innerHTML = `
+                    <div class="alert alert-success">
+                        Debug session active. Set breakpoints and step through code.
+                    </div>
+                    <div class="card mt-3">
+                        <div class="card-header">
+                            Variables
+                        </div>
+                        <div class="card-body">
+                            <pre>n = 5
+i = 3
+result = 3</pre>
+                        </div>
+                    </div>
+                    <div class="card mt-3">
+                        <div class="card-header">
+                            Call Stack
+                        </div>
+                        <div class="card-body">
+                            <pre>fibonacci(5)
+fibonacci(4)
+fibonacci(3)</pre>
+                        </div>
+                    </div>`;
+            });
+            
+            stopExecution.addEventListener('click', () => {
+                showNotification('Execution stopped');
+                document.getElementById('output').innerHTML = '<span class="output-warning">Execution stopped by user</span>';
+            });
+            
+            runSelection.addEventListener('click', () => {
+                const editor = document.getElementById('editor');
+                const selectedText = editor.value.substring(editor.selectionStart, editor.selectionEnd);
+                
+                if (selectedText.trim() === '') {
+                    showNotification('No code selected');
+                } else {
+                    document.getElementById('output').innerHTML = `<span class="output-info">Executing selected code...</span><pre>${selectedText}</pre>`;
+                    setTimeout(() => {
+                        document.getElementById('output').innerHTML += '<span class="output-success">Selection executed</span>';
+                    }, 1000);
+                }
+            });
+        }
+
+        // Settings functionality
+        function setupSettings() {
+            const toggleTheme = document.getElementById('toggleTheme');
+            const toggleFullscreen = document.getElementById('toggleFullscreen');
+            const fontSize = document.getElementById('fontSize');
+            const tabSize = document.getElementById('tabSize');
+            const lineNumbers = document.getElementById('lineNumbers');
+            const pythonVersion = document.getElementById('pythonVersion');
+            
+            // Theme toggle
+            let darkMode = true;
+            toggleTheme.addEventListener('click', () => {
+                darkMode = !darkMode;
+                document.body.style.backgroundColor = darkMode ? '#f5f7fa' : '#1a1a2e';
+                showNotification(darkMode ? 'Switched to light theme' : 'Switched to dark theme');
+            });
+            
+            // Fullscreen toggle
+            toggleFullscreen.addEventListener('click', () => {
+                if (!document.fullscreenElement) {
+                    document.documentElement.requestFullscreen();
+                } else {
+                    if (document.exitFullscreen) {
+                        document.exitFullscreen();
+                    }
+                }
+            });
+            
+            // Settings changes
+            fontSize.addEventListener('change', () => {
+                document.getElementById('editor').style.fontSize = `${fontSize.value}px`;
+                showNotification(`Font size set to ${fontSize.value}px`);
+            });
+            
+            tabSize.addEventListener('change', () => {
+                showNotification(`Tab size set to ${tabSize.value} spaces`);
+            });
+            
+            lineNumbers.addEventListener('change', () => {
+                showNotification(`Line numbers ${lineNumbers.checked ? 'enabled' : 'disabled'}`);
+            });
+            
+            pythonVersion.addEventListener('change', () => {
+                showNotification(`Python version set to ${pythonVersion.value}`);
+            });
         }
     </script>
 </body>
