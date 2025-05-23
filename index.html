@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python Adventure - Learn Python Step by Step</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/brython/3.11.0/brython.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/brython/3.11.0/brython_stdlib.min.js"></script>
+    <style>
+        :root {
+            --primary: #4a6fa5;
+            --secondary: #166088;
+            --accent: #4fc3f7;
+            --background: #f5f7fa;
+            --editor-bg: #282c34;
+            --text: #333;
+            --success: #4caf50;
+            --error: #f44336;
+            --warning: #ff9800;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background-color: var(--primary);
+            color: white;
+            padding: 15px 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .points-badge {
+            background-color: var(--secondary);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .main-layout {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .sidebar {
+            background-color: white;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .level-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .level-item {
+            padding: 10px;
+            margin-bottom: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .level-item:hover {
+            background-color: #f0f0f0;
+        }
+
+        .level-item.completed {
+            background-color: #e8f5e9;
+            color: var(--success);
+            font-weight: 500;
+        }
+
+        .level-item.current {
+            background-color: #e3f2fd;
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        .level-item.locked {
+            color: #999;
+            cursor: not-allowed;
+        }
+
+        .content-area {
+            display: grid;
+            grid-template-rows: auto 1fr auto;
+            gap: 20px;
+        }
+
+        .level-info {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .level-title {
+            margin-top: 0;
+            color: var(--primary);
+        }
+
+        .level-description {
+            margin-bottom: 20px;
+        }
+
+        .example {
+            background-color: #f5f5f5;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-family: monospace;
+        }
+
+        .editor-container {
+            background-color: var(--editor-bg);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        #editor {
+            width: 100%;
+            height: 300px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 14px;
+            background-color: var(--editor-bg);
+            color: #abb2bf;
+            padding: 15px;
+            border: none;
+            resize: none;
+            outline: none;
+        }
+
+        .output-container {
+            background-color: white;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .output-title {
+            margin-top: 0;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        #output {
+            background-color: #f5f5f5;
+            padding: 10px;
+            border-radius: 5px;
+            min-height: 50px;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--secondary);
+        }
+
+        .btn-secondary {
+            background-color: #e0e0e0;
+            color: var(--text);
+        }
+
+        .btn-secondary:hover {
+            background-color: #d0d0d0;
+        }
+
+        .success-message {
+            color: var(--success);
+            margin-top: 10px;
+            font-weight: 500;
+        }
+
+        .error-message {
+            color: var(--error);
+            margin-top: 10px;
+        }
+
+        .badges-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .badge {
+            background-color: var(--accent);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .badge.locked {
+            background-color: #e0e0e0;
+            color: #999;
+        }
+
+        @media (max-width: 768px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body onload="brython()">
+    <header>
+        <div class="container header-content">
+            <div class="logo">Python Adventure</div>
+            <div class="user-info">
+                <div class="points-badge">
+                    <span id="total-points">0</span> points
+                </div>
+                <div class="badge" id="first-program-badge" style="display: none;">First Program</div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="main-layout">
+            <div class="sidebar">
+                <h3>Levels</h3>
+                <ul class="level-list" id="level-list">
+                    <!-- Levels will be populated by JavaScript -->
+                </ul>
+            </div>
+
+            <div class="content-area">
+                <div class="level-info">
+                    <h2 class="level-title" id="level-title">Welcome to Python Adventure!</h2>
+                    <div class="level-description" id="level-description">
+                        Select a level from the sidebar to get started.
+                    </div>
+                    <div class="example" id="level-example" style="display: none;">
+                        <strong>Example:</strong>
+                        <div id="example-content"></div>
+                    </div>
+                </div>
+
+                <div class="editor-container">
+                    <textarea id="editor"># Write your Python code here</textarea>
+                </div>
+
+                <div class="output-container">
+                    <h3 class="output-title">Output</h3>
+                    <div id="output">Your program output will appear here...</div>
+                    <div class="button-group">
+                        <button class="btn btn-primary" onclick="runCode()">Run Code</button>
+                        <button class="btn btn-secondary" onclick="resetCode()">Reset Code</button>
+                        <button class="btn btn-secondary" onclick="showHint()">Hint</button>
+                    </div>
+                    <div id="result-message"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="badges-container" id="badges-container">
+            <!-- Badges will be populated by JavaScript -->
+        </div>
+    </div>
+
+    <script type="text/python">
+        from browser import document, window, alert
+        import sys
+        from io import StringIO
+
+        def run_user_code(code):
+            # Redirect stdout to capture output
+            old_stdout = sys.stdout
+            sys.stdout = mystdout = StringIO()
+            
+            try:
+                # Execute the user code
+                exec(code)
+            except Exception as e:
+                sys.stdout = old_stdout
+                return str(e)
+            
+            # Restore stdout
+            sys.stdout = old_stdout
+            return mystdout.getvalue()
+    </script>
+
+    <script>
+        // Game state
+        const gameState = {
+            currentLevel: 1,
+            completedLevels: [],
+            points: 0,
+            badges: [],
+            levels: [
+                {
+                    id: 1,
+                    title: "Level 1: Hello World",
+                    description: "Write a Python program that prints 'Hello, World!' to the console.",
+                    example: "print('Hello, World!')",
+                    starterCode: "# Write your first Python program here\nprint('Hello, World!')",
+                    expectedOutput: "Hello, World!",
+                    points: 10
+                },
+                {
+                    id: 2,
+                    title: "Level 2: Variables",
+                    description: "Create a variable called 'message' and assign it the value 'Python is fun!'. Then print the variable.",
+                    example: "message = 'Python is fun!'\nprint(message)",
+                    starterCode: "# Create a variable and print it\nmessage = 'Python is fun!'\nprint(message)",
+                    expectedOutput: "Python is fun!",
+                    points: 20
+                },
+                {
+                    id: 3,
+                    title: "Level 3: Basic Math",
+                    description: "Calculate the sum of two numbers (5 and 7) and print the result.",
+                    example: "a = 5\nb = 7\nprint(a + b)",
+                    starterCode: "# Calculate the sum of 5 and 7\na = 5\nb = 7\nprint(a + b)",
+                    expectedOutput: "12",
+                    points: 30
+                },
+                {
+                    id: 4,
+                    title: "Level 4: User Input",
+                    description: "Ask the user for their name and print a greeting message.",
+                    example: "name = input('What is your name? ')\nprint('Hello, ' + name)",
+                    starterCode: "# Ask for user input and print a greeting\nname = input('What is your name? ')\nprint('Hello, ' + name)",
+                    expectedOutput: "Hello, [user's name]",
+                    points: 40
+                },
+                {
+                    id: 5,
+                    title: "Level 5: Conditionals",
+                    description: "Write a program that checks if a number (stored in a variable) is positive, negative, or zero.",
+                    example: "num = 10\nif num > 0:\n    print('Positive')\nelif num < 0:\n    print('Negative')\nelse:\n    print('Zero')",
+                    starterCode: "# Check if a number is positive, negative or zero\nnum = 10\nif num > 0:\n    print('Positive')\nelif num < 0:\n    print('Negative')\nelse:\n    print('Zero')",
+                    expectedOutput: "Positive",
+                    points: 50
+                },
+                {
+                    id: 6,
+                    title: "Level 6: Loops",
+                    description: "Print numbers from 1 to 5 using a loop.",
+                    example: "for i in range(1, 6):\n    print(i)",
+                    starterCode: "# Print numbers from 1 to 5 using a loop\nfor i in range(1, 6):\n    print(i)",
+                    expectedOutput: "1\n2\n3\n4\n5",
+                    points: 60
+                },
+                {
+                    id: 7,
+                    title: "Level 7: Functions",
+                    description: "Create a function called 'square' that takes a number and returns its square. Then call it with the number 4 and print the result.",
+                    example: "def square(num):\n    return num * num\n\nprint(square(4))",
+                    starterCode: "# Create a square function and call it\ndef square(num):\n    return num * num\n\nprint(square(4))",
+                    expectedOutput: "16",
+                    points: 70
+                },
+                {
+                    id: 8,
+                    title: "Level 8: Lists",
+                    description: "Create a list of fruits and print each fruit on a separate line.",
+                    example: "fruits = ['apple', 'banana', 'cherry']\nfor fruit in fruits:\n    print(fruit)",
+                    starterCode: "# Create and iterate through a list\nfruits = ['apple', 'banana', 'cherry']\nfor fruit in fruits:\n    print(fruit)",
+                    expectedOutput: "apple\nbanana\ncherry",
+                    points: 80
+                },
+                {
+                    id: 9,
+                    title: "Level 9: Dictionaries",
+                    description: "Create a dictionary storing a person's information (name, age) and print it.",
+                    example: "person = {'name': 'Alice', 'age': 25}\nprint(person)",
+                    starterCode: "# Create and print a dictionary\nperson = {'name': 'Alice', 'age': 25}\nprint(person)",
+                    expectedOutput: "{'name': 'Alice', 'age': 25}",
+                    points: 90
+                },
+                {
+                    id: 10,
+                    title: "Level 10: Final Challenge",
+                    description: "Write a program that asks for two numbers, adds them together, and prints the result with a formatted message.",
+                    example: "num1 = float(input('Enter first number: '))\nnum2 = float(input('Enter second number: '))\nprint(f'The sum is {num1 + num2}')",
+                    starterCode: "# Final challenge - add two numbers with input\nnum1 = float(input('Enter first number: '))\nnum2 = float(input('Enter second number: '))\nprint(f'The sum is {num1 + num2}')",
+                    expectedOutput: "The sum is [sum of numbers]",
+                    points: 100
+                }
+            ],
+            badges: [
+                { id: 'first-program', name: 'First Program', description: 'Complete your first Python program', earned: false },
+                { id: 'variables-master', name: 'Variables Master', description: 'Complete all variable-related levels', earned: false },
+                { id: 'loop-expert', name: 'Loop Expert', description: 'Complete all loop-related levels', earned: false },
+                { id: 'function-wizard', name: 'Function Wizard', description: 'Complete all function-related levels', earned: false },
+                { id: 'python-champion', name: 'Python Champion', description: 'Complete all levels', earned: false }
+            ]
+        };
+
+        // Load game state from localStorage
+        function loadGameState() {
+            const savedState = localStorage.getItem('pythonAdventureGameState');
+            if (savedState) {
+                const parsedState = JSON.parse(savedState);
+                Object.assign(gameState, parsedState);
+            }
+            updateUI();
+        }
+
+        // Save game state to localStorage
+        function saveGameState() {
+            localStorage.setItem('pythonAdventureGameState', JSON.stringify(gameState));
+        }
+
+        // Initialize the game
+        function initGame() {
+            loadGameState();
+            renderLevelList();
+            renderBadges();
+            loadLevel(gameState.currentLevel);
+        }
+
+        // Render the level list in the sidebar
+        function renderLevelList() {
+            const levelList = document.getElementById('level-list');
+            levelList.innerHTML = '';
+
+            gameState.levels.forEach(level => {
+                const li = document.createElement('li');
+                li.className = 'level-item';
+                
+                if (gameState.completedLevels.includes(level.id)) {
+                    li.classList.add('completed');
+                } else if (level.id === gameState.currentLevel) {
+                    li.classList.add('current');
+                } else if (level.id > gameState.currentLevel && !gameState.completedLevels.includes(level.id - 1)) {
+                    li.classList.add('locked');
+                }
+
+                li.textContent = `Level ${level.id}: ${level.title.split(':')[1].trim()}`;
+                li.onclick = () => {
+                    if (!li.classList.contains('locked')) {
+                        loadLevel(level.id);
+                    }
+                };
+                
+                levelList.appendChild(li);
+            });
+        }
+
+        // Render badges
+        function renderBadges() {
+            const badgesContainer = document.getElementById('badges-container');
+            badgesContainer.innerHTML = '<h3>Your Badges</h3>';
+
+            gameState.badges.forEach(badge => {
+                const badgeElement = document.createElement('div');
+                badgeElement.className = `badge ${badge.earned ? '' : 'locked'}`;
+                badgeElement.textContent = badge.name;
+                badgeElement.title = badge.description;
+                badgesContainer.appendChild(badgeElement);
+            });
+        }
+
+        // Load a specific level
+        function loadLevel(levelId) {
+            const level = gameState.levels.find(l => l.id === levelId);
+            if (!level) return;
+
+            gameState.currentLevel = levelId;
+            document.getElementById('level-title').textContent = level.title;
+            document.getElementById('level-description').textContent = level.description;
+            
+            const exampleContainer = document.getElementById('level-example');
+            document.getElementById('example-content').textContent = level.example;
+            exampleContainer.style.display = 'block';
+            
+            document.getElementById('editor').value = level.starterCode;
+            document.getElementById('output').textContent = 'Your program output will appear here...';
+            document.getElementById('result-message').innerHTML = '';
+            
+            updateUI();
+            saveGameState();
+        }
+
+        // Run the user's code
+        function runCode() {
+            const code = document.getElementById('editor').value;
+            const outputElement = document.getElementById('output');
+            const resultMessage = document.getElementById('result-message');
+            
+            outputElement.textContent = 'Running...';
+            
+            // Use Brython to execute the Python code
+            try {
+                const output = window.run_user_code(code);
+                outputElement.textContent = output.trim();
+                
+                // Check if the output matches the expected result
+                const currentLevel = gameState.levels.find(l => l.id === gameState.currentLevel);
+                const expectedOutput = currentLevel.expectedOutput;
+                
+                // For levels with user input, we can't check exact output
+                const isInputLevel = [4, 10].includes(gameState.currentLevel);
+                
+                if (isInputLevel || output.trim().includes(expectedOutput)) {
+                    // Level completed
+                    if (!gameState.completedLevels.includes(gameState.currentLevel)) {
+                        gameState.completedLevels.push(gameState.currentLevel);
+                        gameState.points += currentLevel.points;
+                        
+                        // Award badges
+                        checkBadges();
+                        
+                        // Unlock next level if not the last one
+                        if (gameState.currentLevel < gameState.levels.length) {
+                            gameState.currentLevel++;
+                        }
+                    }
+                    
+                    resultMessage.innerHTML = `<div class="success-message">✅ Level completed! You earned ${currentLevel.points} points.</div>`;
+                } else {
+                    resultMessage.innerHTML = `<div class="error-message">❌ Not quite right. Try again!</div>`;
+                }
+            } catch (error) {
+                outputElement.textContent = `Error: ${error}`;
+                resultMessage.innerHTML = `<div class="error-message">❌ There was an error in your code.</div>`;
+            }
+            
+            updateUI();
+            saveGameState();
+        }
+
+        // Check if any badges should be awarded
+        function checkBadges() {
+            // First Program badge
+            if (gameState.completedLevels.includes(1) && !gameState.badges[0].earned) {
+                gameState.badges[0].earned = true;
+                document.getElementById('first-program-badge').style.display = 'flex';
+            }
+            
+            // Variables Master badge (levels 2)
+            if (gameState.completedLevels.includes(2) && !gameState.badges[1].earned) {
+                gameState.badges[1].earned = true;
+            }
+            
+            // Loop Expert badge (levels 6)
+            if (gameState.completedLevels.includes(6) && !gameState.badges[2].earned) {
+                gameState.badges[2].earned = true;
+            }
+            
+            // Function Wizard badge (levels 7)
+            if (gameState.completedLevels.includes(7) && !gameState.badges[3].earned) {
+                gameState.badges[3].earned = true;
+            }
+            
+            // Python Champion badge (all levels)
+            if (gameState.completedLevels.length === gameState.levels.length && !gameState.badges[4].earned) {
+                gameState.badges[4].earned = true;
+            }
+        }
+
+        // Reset the code editor to the starter code
+        function resetCode() {
+            const currentLevel = gameState.levels.find(l => l.id === gameState.currentLevel);
+            if (currentLevel) {
+                document.getElementById('editor').value = currentLevel.starterCode;
+                document.getElementById('output').textContent = 'Your program output will appear here...';
+                document.getElementById('result-message').innerHTML = '';
+            }
+        }
+
+        // Show a hint for the current level
+        function showHint() {
+            const currentLevel = gameState.levels.find(l => l.id === gameState.currentLevel);
+            if (currentLevel) {
+                alert(`Hint: ${currentLevel.example}`);
+            }
+        }
+
+        // Update the UI based on game state
+        function updateUI() {
+            document.getElementById('total-points').textContent = gameState.points;
+            renderLevelList();
+            renderBadges();
+        }
+
+        // Initialize the game when the page loads
+        window.onload = initGame;
+    </script>
+</body>
+</html>
