@@ -3,1325 +3,1389 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advanced Python Code Runner with AI</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
+    <title>Ritesh Rathod - Portfolio</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --primary-color: #4361ee;
-            --secondary-color: #3f37c9;
-            --accent-color: #4895ef;
-            --dark-color: #1a1a2e;
-            --light-color: #f8f9fa;
-            --success-color: #4cc9f0;
-            --warning-color: #f8961e;
-            --danger-color: #f72585;
-            --border-radius: 8px;
-            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --primary: #e50914;
+            --dark: #141414;
+            --light: #f5f5f5;
+            --gray: #999;
             --transition: all 0.3s ease;
         }
 
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f5f7fa;
-            color: #333;
-            line-height: 1.6;
+            background-color: var(--dark);
+            color: var(--light);
+            overflow-x: hidden;
         }
 
-        .navbar-brand {
-            font-weight: 700;
-            font-size: 1.5rem;
-            color: var(--primary-color);
-        }
-
-        .navbar {
-            box-shadow: var(--box-shadow);
-            background-color: white;
-        }
-
-        .main-container {
-            max-width: 1800px;
-            margin: 20px auto;
-            padding: 0 15px;
-        }
-
-        .editor-container, .output-container, .ai-container {
-            background-color: white;
-            border-radius: var(--border-radius);
-            box-shadow: var(--box-shadow);
-            height: calc(100vh - 180px);
-            display: flex;
-            flex-direction: column;
-        }
-
-        .panel-header {
-            background-color: var(--dark-color);
-            color: white;
-            padding: 12px 15px;
-            border-top-left-radius: var(--border-radius);
-            border-top-right-radius: var(--border-radius);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .panel-title {
-            font-weight: 600;
-            font-size: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .panel-actions {
-            display: flex;
-            gap: 8px;
-        }
-
-        .btn-action {
-            background-color: transparent;
-            border: none;
-            color: white;
-            padding: 4px 8px;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: var(--transition);
-            font-size: 0.9rem;
-        }
-
-        .btn-action:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-        }
-
-        .btn-primary {
-            background-color: var(--primary-color);
-            border-color: var(--primary-color);
-        }
-
-        .btn-primary:hover {
-            background-color: var(--secondary-color);
-            border-color: var(--secondary-color);
-        }
-
-        .btn-success {
-            background-color: var(--success-color);
-            border-color: var(--success-color);
-        }
-
-        .btn-warning {
-            background-color: var(--warning-color);
-            border-color: var(--warning-color);
-        }
-
-        .btn-danger {
-            background-color: var(--danger-color);
-            border-color: var(--danger-color);
-        }
-
-        #editor {
-            width: 100%;
-            height: 100%;
-            border: none;
-            padding: 15px;
-            font-family: 'Fira Code', 'Consolas', monospace;
-            font-size: 14px;
-            line-height: 1.5;
-            resize: none;
-            outline: none;
-            white-space: pre;
-            background-color: #1e1e1e;
-            color: #d4d4d4;
-            border-radius: 0 0 var(--border-radius) var(--border-radius);
-        }
-
-        #output {
-            width: 100%;
-            height: 100%;
-            padding: 15px;
-            font-family: 'Consolas', 'Monaco', monospace;
-            font-size: 14px;
-            line-height: 1.5;
-            overflow-y: auto;
-            background-color: #1e1e1e;
-            color: #d4d4d4;
-            border-radius: 0 0 var(--border-radius) var(--border-radius);
-        }
-
-        .input-prompt {
-            padding: 15px;
-            background-color: #252526;
-            border-top: 1px solid #333;
-            display: none;
-        }
-
-        .input-prompt label {
-            display: block;
-            margin-bottom: 8px;
-            color: #d4d4d4;
-        }
-
-        .input-prompt input {
-            width: 100%;
-            padding: 8px 12px;
-            border: 1px solid #333;
-            border-radius: 4px;
-            background-color: #2d2d2d;
-            color: #d4d4d4;
-        }
-
-        .submit-input {
-            background-color: var(--accent-color);
-            color: white;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 4px;
-            margin-top: 10px;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .submit-input:hover {
-            background-color: #3a86ff;
-        }
-
-        .ai-conversation {
-            height: 100%;
-            overflow-y: auto;
-            padding: 15px;
-            background-color: #1e1e1e;
-            color: #d4d4d4;
-            border-radius: 0 0 var(--border-radius) var(--border-radius);
-        }
-
-        .ai-message {
-            margin-bottom: 15px;
-            padding: 10px 15px;
-            border-radius: 8px;
-            max-width: 80%;
-        }
-
-        .ai-user {
-            background-color: #2d5278;
-            margin-left: auto;
-            border-bottom-right-radius: 4px;
-        }
-
-        .ai-bot {
-            background-color: #383838;
-            margin-right: auto;
-            border-bottom-left-radius: 4px;
-        }
-
-        .ai-input {
-            display: flex;
-            padding: 15px;
-            background-color: #252526;
-            border-top: 1px solid #333;
-        }
-
-        .ai-input textarea {
-            flex: 1;
-            padding: 10px;
-            border: 1px solid #333;
-            border-radius: 4px;
-            background-color: #2d2d2d;
-            color: #d4d4d4;
-            resize: none;
-            height: 80px;
-        }
-
-        .ai-input button {
-            margin-left: 10px;
-            height: 80px;
-            width: 80px;
-            background-color: var(--accent-color);
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .ai-input button:hover {
-            background-color: #3a86ff;
-        }
-
-        .tab-content {
-            height: calc(100% - 45px);
-        }
-
-        .nav-tabs {
-            border-bottom: 1px solid #333;
-        }
-
-        .nav-tabs .nav-link {
-            color: #d4d4d4;
-            background-color: #252526;
-            border: 1px solid #333;
-            border-bottom: none;
-            border-radius: 0;
-            padding: 8px 15px;
-        }
-
-        .nav-tabs .nav-link.active {
-            background-color: #1e1e1e;
-            color: white;
-            border-color: #333 #333 transparent #333;
-        }
-
-        .nav-tabs .nav-link:hover {
-            border-color: #333 #333 transparent #333;
-        }
-
-        .status-bar {
-            background-color: #252526;
-            color: #d4d4d4;
-            padding: 5px 15px;
-            font-size: 0.8rem;
-            display: flex;
-            justify-content: space-between;
-            border-radius: 0 0 var(--border-radius) var(--border-radius);
-        }
-
-        .status-item {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .snippets-list {
-            height: 100%;
-            overflow-y: auto;
-            padding: 15px;
-            background-color: #1e1e1e;
-            color: #d4d4d4;
-        }
-
-        .snippet-item {
-            padding: 10px;
-            margin-bottom: 10px;
-            background-color: #252526;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .snippet-item:hover {
-            background-color: #2d2d2d;
-        }
-
-        .snippet-title {
-            font-weight: 600;
-            margin-bottom: 5px;
-        }
-
-        .snippet-desc {
-            font-size: 0.8rem;
-            color: #a0a0a0;
-        }
-
-        .file-explorer {
-            height: 100%;
-            overflow-y: auto;
-            padding: 15px;
-            background-color: #1e1e1e;
-            color: #d4d4d4;
-        }
-
-        .file-item {
-            padding: 8px 0;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .file-item:hover {
-            color: white;
-        }
-
-        .settings-panel {
-            padding: 15px;
-            height: 100%;
-            overflow-y: auto;
-            background-color: #1e1e1e;
-            color: #d4d4d4;
-        }
-
-        .settings-group {
-            margin-bottom: 20px;
-        }
-
-        .settings-title {
-            font-weight: 600;
-            margin-bottom: 10px;
-            padding-bottom: 5px;
-            border-bottom: 1px solid #333;
-        }
-
-        .setting-item {
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .form-check-input:checked {
-            background-color: var(--accent-color);
-            border-color: var(--accent-color);
-        }
-
-        .form-select, .form-control {
-            background-color: #2d2d2d;
-            color: #d4d4d4;
-            border: 1px solid #333;
-        }
-
-        .form-select:focus, .form-control:focus {
-            background-color: #2d2d2d;
-            color: #d4d4d4;
-            border-color: var(--accent-color);
-            box-shadow: 0 0 0 0.25rem rgba(58, 134, 255, 0.25);
-        }
-
-        .toast-container {
+        /* Netflix Intro Animation */
+        .netflix-intro {
             position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 1100;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background-color: var(--dark);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            animation: fadeOut 1s ease-in-out 3s forwards;
         }
 
-        .toast {
-            background-color: #252526;
-            color: #d4d4d4;
-            border: 1px solid #333;
+        .netflix-logo {
+            position: relative;
+            width: 100%;
+            text-align: center;
         }
 
-        .toast-header {
-            background-color: #2d2d2d;
-            color: #d4d4d4;
-            border-bottom: 1px solid #333;
+        .netflix-text {
+            font-size: 8vw;
+            font-weight: 900;
+            text-transform: uppercase;
+            color: transparent;
+            -webkit-text-stroke: 2px var(--primary);
+            position: relative;
+            animation: netflixIntro 2.5s ease-in-out;
         }
 
-        .dropdown-menu {
-            background-color: #252526;
-            border: 1px solid #333;
+        .netflix-text::before {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 100%;
+            color: var(--primary);
+            -webkit-text-stroke: 0px var(--primary);
+            border-right: 4px solid var(--primary);
+            overflow: hidden;
+            animation: netflixFill 2.5s ease-in-out forwards, blink 0.5s step-end infinite;
         }
 
-        .dropdown-item {
-            color: #d4d4d4;
-        }
-
-        .dropdown-item:hover {
-            background-color: #2d2d2d;
-            color: white;
-        }
-
-        .dropdown-divider {
-            border-top: 1px solid #333;
-        }
-
-        .progress {
-            background-color: #2d2d2d;
-            height: 6px;
-        }
-
-        .progress-bar {
-            background-color: var(--accent-color);
-        }
-
-        .tooltip-inner {
-            background-color: #252526;
-            color: #d4d4d4;
-            border: 1px solid #333;
-        }
-
-        .bs-tooltip-auto[data-popper-placement^=top] .tooltip-arrow::before, 
-        .bs-tooltip-top .tooltip-arrow::before {
-            border-top-color: #333;
-        }
-
-        @media (max-width: 1200px) {
-            .editor-container, .output-container, .ai-container {
-                height: 500px;
+        @keyframes netflixIntro {
+            0%, 10% {
+                width: 0;
+            }
+            70%, 100% {
+                width: 100%;
             }
         }
 
-        /* Syntax highlighting for output */
-        .output-error {
-            color: #f92672;
+        @keyframes netflixFill {
+            0% {
+                width: 0;
+            }
+            100% {
+                width: 100%;
+            }
         }
 
-        .output-warning {
-            color: #fd971f;
+        @keyframes blink {
+            0%, 100% {
+                border-color: transparent;
+            }
+            50% {
+                border-color: var(--primary);
+            }
         }
 
-        .output-success {
-            color: #a6e22e;
+        @keyframes fadeOut {
+            to {
+                opacity: 0;
+                visibility: hidden;
+            }
         }
 
-        .output-info {
-            color: #66d9ef;
+        /* Header */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 20px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            background-color: rgba(20, 20, 20, 0.9);
+            backdrop-filter: blur(10px);
+            transition: var(--transition);
         }
 
-        /* Loading animation */
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        .logo {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
         }
 
-        .spinner {
-            animation: spin 1s linear infinite;
+        .logo span {
+            color: var(--light);
         }
 
-        /* Custom scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
+        .nav-links {
+            display: flex;
+            gap: 2rem;
         }
 
-        ::-webkit-scrollbar-track {
-            background: #2d2d2d;
+        .nav-links a {
+            color: var(--light);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+            position: relative;
         }
 
-        ::-webkit-scrollbar-thumb {
-            background: #555;
-            border-radius: 4px;
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--primary);
+            transition: var(--transition);
         }
 
-        ::-webkit-scrollbar-thumb:hover {
-            background: #666;
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .hamburger {
+            display: none;
+            cursor: pointer;
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 0 5%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-content {
+            max-width: 600px;
+            z-index: 2;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+
+        .hero h1 span {
+            color: var(--primary);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            color: var(--gray);
+        }
+
+        .hero-btns {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border-radius: 5px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: var(--light);
+        }
+
+        .btn-primary:hover {
+            background-color: #f40612;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(229, 9, 20, 0.3);
+        }
+
+        .btn-secondary {
+            border: 2px solid var(--light);
+            color: var(--light);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--light);
+            color: var(--dark);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(255, 255, 255, 0.1);
+        }
+
+        .hero-image {
+            position: absolute;
+            right: 5%;
+            width: 40%;
+            height: 80%;
+            perspective: 1000px;
+        }
+
+        .floating-img {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            transform-style: preserve-3d;
+            transition: transform 0.5s ease;
+            filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.5));
+        }
+
+        /* About Section */
+        section {
+            padding: 100px 5%;
+            position: relative;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 50%;
+            height: 4px;
+            background-color: var(--primary);
+        }
+
+        .about-content {
+            display: flex;
+            gap: 3rem;
+            align-items: center;
+        }
+
+        .about-img {
+            flex: 1;
+            position: relative;
+            perspective: 1000px;
+        }
+
+        .profile-img {
+            width: 100%;
+            max-width: 400px;
+            border-radius: 10px;
+            transform: rotateY(20deg);
+            transition: var(--transition);
+            box-shadow: 0 20px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .about-img:hover .profile-img {
+            transform: rotateY(0deg);
+        }
+
+        .about-text {
+            flex: 1;
+        }
+
+        .about-text h3 {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .about-text p {
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+            color: var(--gray);
+        }
+
+        /* Skills Section */
+        .skills-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .skill-item {
+            background-color: rgba(255, 255, 255, 0.05);
+            padding: 2rem;
+            border-radius: 10px;
+            transition: var(--transition);
+        }
+
+        .skill-item:hover {
+            transform: translateY(-10px);
+            background-color: rgba(229, 9, 20, 0.1);
+        }
+
+        .skill-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .skill-name {
+            font-weight: 600;
+        }
+
+        .skill-percent {
+            color: var(--primary);
+        }
+
+        .progress-bar {
+            height: 10px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .progress {
+            height: 100%;
+            background-color: var(--primary);
+            border-radius: 5px;
+            width: 0;
+            transition: width 1.5s ease;
+        }
+
+        /* Resume Section */
+        .resume-container {
+            display: flex;
+            gap: 3rem;
+            margin-top: 3rem;
+        }
+
+        .resume-column {
+            flex: 1;
+        }
+
+        .resume-item {
+            background-color: rgba(255, 255, 255, 0.05);
+            padding: 2rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            position: relative;
+            transition: var(--transition);
+        }
+
+        .resume-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 0;
+            background-color: var(--primary);
+            transition: height 0.5s ease;
+        }
+
+        .resume-item:hover::before {
+            height: 100%;
+        }
+
+        .resume-item:hover {
+            transform: translateX(10px);
+        }
+
+        .resume-date {
+            color: var(--primary);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .resume-title {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+        }
+
+        .resume-description {
+            color: var(--gray);
+            line-height: 1.6;
+        }
+
+        .resume-description li {
+            margin-bottom: 0.5rem;
+            list-style-type: none;
+            position: relative;
+            padding-left: 1.5rem;
+        }
+
+        .resume-description li::before {
+            content: '▹';
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+        }
+
+        .download-btn {
+            display: inline-block;
+            margin-top: 2rem;
+        }
+
+        /* Certificates Section */
+        .certificates-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .certificate-item {
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            overflow: hidden;
+            transition: var(--transition);
+        }
+
+        .certificate-item:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 20px rgba(229, 9, 20, 0.2);
+        }
+
+        .certificate-img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .certificate-content {
+            padding: 1.5rem;
+        }
+
+        .certificate-title {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .certificate-date {
+            color: var(--gray);
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .certificate-btns {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .certificate-btn {
+            flex: 1;
+            text-align: center;
+            padding: 0.5rem;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .btn-download {
+            background-color: var(--primary);
+            color: var(--light);
+        }
+
+        .btn-download:hover {
+            background-color: #f40612;
+        }
+
+        .btn-view {
+            border: 1px solid var(--light);
+            color: var(--light);
+        }
+
+        .btn-view:hover {
+            background-color: var(--light);
+            color: var(--dark);
+        }
+
+        /* Projects Section */
+        .projects-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .project-item {
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            overflow: hidden;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .project-item:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 20px rgba(229, 9, 20, 0.2);
+        }
+
+        .project-img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            transition: var(--transition);
+        }
+
+        .project-item:hover .project-img {
+            transform: scale(1.05);
+        }
+
+        .project-content {
+            padding: 1.5rem;
+        }
+
+        .project-title {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .project-tech {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .tech-tag {
+            background-color: rgba(229, 9, 20, 0.2);
+            color: var(--primary);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+        }
+
+        .project-btns {
+            display: flex;
+            gap: 1rem;
+        }
+
+        /* Contact Section */
+        .contact-container {
+            display: flex;
+            gap: 3rem;
+            margin-top: 3rem;
+        }
+
+        .contact-info {
+            flex: 1;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .contact-icon {
+            width: 50px;
+            height: 50px;
+            background-color: rgba(229, 9, 20, 0.2);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 1rem;
+            color: var(--primary);
+            font-size: 1.2rem;
+        }
+
+        .contact-text h4 {
+            font-size: 1.1rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .contact-text p, .contact-text a {
+            color: var(--gray);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .contact-text a:hover {
+            color: var(--primary);
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .social-link {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.05);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--light);
+            transition: var(--transition);
+        }
+
+        .social-link:hover {
+            background-color: var(--primary);
+            transform: translateY(-5px);
+        }
+
+        .contact-form {
+            flex: 1;
+            background-color: rgba(255, 255, 255, 0.05);
+            padding: 2rem;
+            border-radius: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.8rem;
+            background-color: rgba(255, 255, 255, 0.1);
+            border: none;
+            border-radius: 5px;
+            color: var(--light);
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            outline: none;
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        textarea.form-control {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        .submit-btn {
+            background-color: var(--primary);
+            color: var(--light);
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .submit-btn:hover {
+            background-color: #f40612;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(229, 9, 20, 0.3);
+        }
+
+        /* Footer */
+        footer {
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 2rem 5%;
+            text-align: center;
+            margin-top: 100px;
+        }
+
+        .footer-text {
+            color: var(--gray);
+            margin-bottom: 1rem;
+        }
+
+        .footer-credit {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        .footer-credit a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        /* Back to Top Button */
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            background-color: var(--primary);
+            color: var(--light);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-decoration: none;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+            z-index: 99;
+        }
+
+        .back-to-top.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .back-to-top:hover {
+            background-color: #f40612;
+            transform: translateY(-5px);
+        }
+
+        /* 3D Animation Classes */
+        .animate-3d {
+            opacity: 0;
+            transform: translateX(-100px) rotateY(90deg);
+            transition: all 1s ease;
+        }
+
+        .animate-3d.from-right {
+            transform: translateX(100px) rotateY(-90deg);
+        }
+
+        .animate-3d.active {
+            opacity: 1;
+            transform: translateX(0) rotateY(0deg);
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 992px) {
+            .hero h1 {
+                font-size: 2.8rem;
+            }
+
+            .about-content {
+                flex-direction: column;
+            }
+
+            .resume-container {
+                flex-direction: column;
+            }
+
+            .contact-container {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                position: fixed;
+                top: 80px;
+                left: -100%;
+                width: 100%;
+                height: calc(100vh - 80px);
+                background-color: var(--dark);
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 2rem;
+                transition: var(--transition);
+            }
+
+            .nav-links.active {
+                left: 0;
+            }
+
+            .hamburger {
+                display: block;
+                font-size: 1.5rem;
+                color: var(--light);
+            }
+
+            .hero {
+                flex-direction: column;
+                text-align: center;
+                padding-top: 150px;
+                height: auto;
+                min-height: 100vh;
+            }
+
+            .hero-content {
+                margin-bottom: 3rem;
+            }
+
+            .hero-btns {
+                justify-content: center;
+            }
+
+            .hero-image {
+                position: relative;
+                right: auto;
+                width: 100%;
+                height: 300px;
+                margin-top: 2rem;
+            }
+
+            .netflix-text {
+                font-size: 15vw;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .projects-container {
+                grid-template-columns: 1fr;
+            }
+
+            .certificates-container {
+                grid-template-columns: 1fr;
+            }
+
+            .project-btns, .certificate-btns {
+                flex-direction: column;
+            }
+
+            .btn, .certificate-btn {
+                width: 100%;
+            }
         }
     </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#">
-                <i class="fas fa-code me-2"></i>PyAI Runner
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="fileDropdown" role="button" data-bs-toggle="dropdown">
-                            <i class="fas fa-file-code me-1"></i> File
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#" id="newFile"><i class="fas fa-file me-2"></i>New</a></li>
-                            <li><a class="dropdown-item" href="#" id="openFile"><i class="fas fa-folder-open me-2"></i>Open</a></li>
-                            <li><a class="dropdown-item" href="#" id="saveFile"><i class="fas fa-save me-2"></i>Save</a></li>
-                            <li><a class="dropdown-item" href="#" id="saveAsFile"><i class="fas fa-save me-2"></i>Save As</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="#" id="exportPDF"><i class="fas fa-file-pdf me-2"></i>Export as PDF</a></li>
-                            <li><a class="dropdown-item" href="#" id="exportHTML"><i class="fas fa-file-code me-2"></i>Export as HTML</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="editDropdown" role="button" data-bs-toggle="dropdown">
-                            <i class="fas fa-edit me-1"></i> Edit
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#" id="undoAction"><i class="fas fa-undo me-2"></i>Undo</a></li>
-                            <li><a class="dropdown-item" href="#" id="redoAction"><i class="fas fa-redo me-2"></i>Redo</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="#" id="cutAction"><i class="fas fa-cut me-2"></i>Cut</a></li>
-                            <li><a class="dropdown-item" href="#" id="copyAction"><i class="fas fa-copy me-2"></i>Copy</a></li>
-                            <li><a class="dropdown-item" href="#" id="pasteAction"><i class="fas fa-paste me-2"></i>Paste</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="#" id="findAction"><i class="fas fa-search me-2"></i>Find</a></li>
-                            <li><a class="dropdown-item" href="#" id="replaceAction"><i class="fas fa-exchange-alt me-2"></i>Replace</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="viewDropdown" role="button" data-bs-toggle="dropdown">
-                            <i class="fas fa-eye me-1"></i> View
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#" id="zoomIn"><i class="fas fa-search-plus me-2"></i>Zoom In</a></li>
-                            <li><a class="dropdown-item" href="#" id="zoomOut"><i class="fas fa-search-minus me-2"></i>Zoom Out</a></li>
-                            <li><a class="dropdown-item" href="#" id="resetZoom"><i class="fas fa-search me-2"></i>Reset Zoom</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="#" id="toggleTheme"><i class="fas fa-moon me-2"></i>Toggle Theme</a></li>
-                            <li><a class="dropdown-item" href="#" id="toggleFullscreen"><i class="fas fa-expand me-2"></i>Toggle Fullscreen</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="runDropdown" role="button" data-bs-toggle="dropdown">
-                            <i class="fas fa-play me-1"></i> Run
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#" id="runCode"><i class="fas fa-play me-2"></i>Run</a></li>
-                            <li><a class="dropdown-item" href="#" id="debugCode"><i class="fas fa-bug me-2"></i>Debug</a></li>
-                            <li><a class="dropdown-item" href="#" id="stopExecution"><i class="fas fa-stop me-2"></i>Stop</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="#" id="runSelection"><i class="fas fa-code me-2"></i>Run Selection</a></li>
-                            <li><a class="dropdown-item" href="#" id="formatCode"><i class="fas fa-indent me-2"></i>Format Code</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="aiDropdown" role="button" data-bs-toggle="dropdown">
-                            <i class="fas fa-robot me-1"></i> AI Assistant
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#" id="aiExplain"><i class="fas fa-question-circle me-2"></i>Explain Code</a></li>
-                            <li><a class="dropdown-item" href="#" id="aiOptimize"><i class="fas fa-tachometer-alt me-2"></i>Optimize Code</a></li>
-                            <li><a class="dropdown-item" href="#" id="aiDebug"><i class="fas fa-bug me-2"></i>Debug Code</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="#" id="aiGenerate"><i class="fas fa-magic me-2"></i>Generate Code</a></li>
-                            <li><a class="dropdown-item" href="#" id="aiConvert"><i class="fas fa-exchange-alt me-2"></i>Convert Code</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="helpDropdown" role="button" data-bs-toggle="dropdown">
-                            <i class="fas fa-question-circle me-1"></i> Help
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#" id="showDocs"><i class="fas fa-book me-2"></i>Documentation</a></li>
-                            <li><a class="dropdown-item" href="#" id="showShortcuts"><i class="fas fa-keyboard me-2"></i>Keyboard Shortcuts</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="#" id="showAbout"><i class="fas fa-info-circle me-2"></i>About</a></li>
-                        </ul>
-                    </li>
-                </ul>
-                <div class="d-flex">
-                    <button class="btn btn-outline-primary me-2" id="saveSnippet">
-                        <i class="fas fa-bookmark me-1"></i> Save Snippet
-                    </button>
-                    <button class="btn btn-primary" id="runButton">
-                        <i class="fas fa-play me-1"></i> Run
-                    </button>
+    <!-- Netflix Intro Animation -->
+    <div class="netflix-intro">
+        <div class="netflix-logo">
+            <h1 class="netflix-text" data-text="Ritesh Rathod">Ritesh Rathod</h1>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header>
+        <a href="#" class="logo">Ritesh<span>Rathod</span></a>
+        <nav class="nav-links">
+            <a href="#home">Home</a>
+            <a href="#about">About</a>
+            <a href="#skills">Skills</a>
+            <a href="#resume">Resume</a>
+            <a href="#certificates">Certificates</a>
+            <a href="#projects">Projects</a>
+            <a href="#contact">Contact</a>
+        </nav>
+        <div class="hamburger">
+            <i class="fas fa-bars"></i>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-content animate-3d">
+            <h1>Hi, I'm <span>Ritesh Rathod</span> 👋</h1>
+            <p>🚀 Student | 💻 Developer | 🔥 Tech Enthusiast</p>
+            <div class="hero-btns">
+                <a href="#contact" class="btn btn-primary">Contact Me</a>
+                <a href="#resume" class="btn btn-secondary">View Resume</a>
+            </div>
+        </div>
+        <div class="hero-image">
+            <img src="https://images.unsplash.com/photo-1547658719-da2b51169166?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1064&q=80" alt="Developer" class="floating-img">
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about">
+        <h2 class="section-title animate-3d">About Me</h2>
+        <p class="animate-3d from-right">Get to know me, my skills, and what I'm passionate about</p>
+        
+        <div class="about-content">
+            <div class="about-img animate-3d">
+                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=774&q=80" alt="Ritesh Rathod" class="profile-img">
+            </div>
+            <div class="about-text animate-3d from-right">
+                <h3>Second Year Student At St. Vincent Pallotti College Of Engineering And Technology</h3>
+                <p>Hello! I'm Ritesh Rathod, a passionate student with a strong interest in Data Analysis and web development. I'm enthusiastic about learning new technologies and developing skills that will help me grow both academically and professionally.</p>
+                
+                <h3 style="margin-top: 2rem;">My Skills</h3>
+                <div class="skills-list">
+                    <div class="skill">
+                        <div class="skill-info">
+                            <span>Python Programming</span>
+                            <span>85%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress" style="width: 85%"></div>
+                        </div>
+                    </div>
+                    <div class="skill">
+                        <div class="skill-info">
+                            <span>Web Development</span>
+                            <span>75%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress" style="width: 75%"></div>
+                        </div>
+                    </div>
+                    <div class="skill">
+                        <div class="skill-info">
+                            <span>C Programming</span>
+                            <span>80%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress" style="width: 80%"></div>
+                        </div>
+                    </div>
+                    <div class="skill">
+                        <div class="skill-info">
+                            <span>Problem Solving</span>
+                            <span>90%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress" style="width: 90%"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-    </nav>
+    </section>
 
-    <div class="main-container">
-        <div class="row g-3">
-            <div class="col-lg-6">
-                <div class="editor-container">
-                    <div class="panel-header">
-                        <div class="panel-title">
-                            <i class="fas fa-file-code"></i>
-                            <span>script.py</span>
-                        </div>
-                        <div class="panel-actions">
-                            <button class="btn-action" title="Save" id="editorSave">
-                                <i class="fas fa-save"></i>
-                            </button>
-                            <button class="btn-action" title="Run" id="editorRun">
-                                <i class="fas fa-play"></i>
-                            </button>
-                            <button class="btn-action" title="Format" id="editorFormat">
-                                <i class="fas fa-indent"></i>
-                            </button>
-                            <div class="dropdown">
-                                <button class="btn-action dropdown-toggle" type="button" id="editorMore" data-bs-toggle="dropdown">
-                                    <i class="fas fa-ellipsis-h"></i>
-                                </button>
-                                <ul class="dropdown-menu dropdown-menu-end">
-                                    <li><a class="dropdown-item" href="#" id="editorSettings"><i class="fas fa-cog me-2"></i>Settings</a></li>
-                                    <li><a class="dropdown-item" href="#" id="editorThemes"><i class="fas fa-palette me-2"></i>Themes</a></li>
-                                    <li><hr class="dropdown-divider"></li>
-                                    <li><a class="dropdown-item" href="#" id="editorShare"><i class="fas fa-share-alt me-2"></i>Share</a></li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    <textarea id="editor"># Welcome to PyAI Runner!
-# Write your Python code here and click Run to execute it
-
-def fibonacci(n):
-    """Return the nth Fibonacci number."""
-    if n <= 1:
-        return n
-    else:
-        return fibonacci(n-1) + fibonacci(n-2)
-
-# Print first 10 Fibonacci numbers
-print("First 10 Fibonacci numbers:")
-for i in range(10):
-    print(f"Fibonacci({i}) = {fibonacci(i)}")
-
-# Example of user input
-name = input("What's your name? ")
-print(f"Hello, {name}! Welcome to Python programming.")
-
-# AI Assistant can help you with:
-# - Explaining code
-# - Debugging errors
-# - Optimizing performance
-# - Generating new code</textarea>
-                    <div class="input-prompt" id="inputPrompt">
-                        <label id="promptText">Enter input:</label>
-                        <input type="text" id="userInput" class="form-control">
-                        <button class="submit-input mt-2" id="submitInput">
-                            <i class="fas fa-paper-plane me-1"></i> Submit
-                        </button>
-                    </div>
-                    <div class="status-bar">
-                        <div class="status-item">
-                            <i class="fas fa-code"></i>
-                            <span>Python 3.11</span>
-                        </div>
-                        <div class="status-item">
-                            <i class="fas fa-ruler-combined"></i>
-                            <span>Ln 1, Col 1</span>
-                        </div>
-                        <div class="status-item">
-                            <i class="fas fa-keyboard"></i>
-                            <span>UTF-8</span>
-                        </div>
-                        <div class="status-item">
-                            <i class="fas fa-file"></i>
-                            <span>CRLF</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-6">
-                <div class="output-container">
-                    <ul class="nav nav-tabs" id="outputTabs">
-                        <li class="nav-item">
-                            <a class="nav-link active" data-bs-toggle="tab" href="#outputTab">
-                                <i class="fas fa-terminal me-1"></i> Output
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" data-bs-toggle="tab" href="#problemsTab">
-                                <i class="fas fa-exclamation-circle me-1"></i> Problems
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" data-bs-toggle="tab" href="#debugTab">
-                                <i class="fas fa-bug me-1"></i> Debug
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" data-bs-toggle="tab" href="#snippetsTab">
-                                <i class="fas fa-bookmark me-1"></i> Snippets
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" data-bs-toggle="tab" href="#filesTab">
-                                <i class="fas fa-folder me-1"></i> Files
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" data-bs-toggle="tab" href="#settingsTab">
-                                <i class="fas fa-cog me-1"></i> Settings
-                            </a>
-                        </li>
+    <!-- Resume Section -->
+    <section id="resume" class="resume">
+        <h2 class="section-title animate-3d">My Resume</h2>
+        <p class="animate-3d from-right">My education and professional journey</p>
+        
+        <div class="resume-container">
+            <div class="resume-column animate-3d">
+                <h3>Education</h3>
+                
+                <div class="resume-item">
+                    <span class="resume-date">2024 - 2028</span>
+                    <h4 class="resume-title">Bachelor's Degree in Computer Science And Business System</h4>
+                    <p class="resume-location">St. Vincent Pallotti College Of Engineering And Technology</p>
+                    <ul class="resume-description">
+                        <li>🎓 B.Tech in Computer Science & Business Systems</li>
+                        <li>📊 Specializing in Data Analysis & Business Intelligence</li>
+                        <li>💡 Passionate about transforming data into strategic decisions</li>
+                        <li>🏆 Google Python Certified</li>
+                        <li>🔗 Bridging the gap between technical systems and business value</li>
                     </ul>
-                    <div class="tab-content">
-                        <div class="tab-pane fade show active" id="outputTab">
-                            <pre id="output">Ready to execute Python code. Click the Run button or press F5.</pre>
-                        </div>
-                        <div class="tab-pane fade" id="problemsTab">
-                            <div class="snippets-list" id="problemsList">
-                                <div class="alert alert-info">
-                                    No problems detected in your code.
-                                </div>
-                            </div>
-                        </div>
-                        <div class="tab-pane fade" id="debugTab">
-                            <div class="snippets-list" id="debugConsole">
-                                <div class="alert alert-info">
-                                    Debugger is not active. Start debugging session to see variables and stack traces.
-                                </div>
-                            </div>
-                        </div>
-                        <div class="tab-pane fade" id="snippetsTab">
-                            <div class="snippets-list" id="snippetsList">
-                                <div class="snippet-item">
-                                    <div class="snippet-title">Fibonacci Sequence</div>
-                                    <div class="snippet-desc">Calculates Fibonacci numbers recursively</div>
-                                </div>
-                                <div class="snippet-item">
-                                    <div class="snippet-title">Quick Sort</div>
-                                    <div class="snippet-desc">Implementation of quick sort algorithm</div>
-                                </div>
-                                <div class="snippet-item">
-                                    <div class="snippet-title">File Reader</div>
-                                    <div class="snippet-desc">Reads and processes text files</div>
-                                </div>
-                                <div class="snippet-item">
-                                    <div class="snippet-title">API Client</div>
-                                    <div class="snippet-desc">Makes HTTP requests to REST APIs</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="tab-pane fade" id="filesTab">
-                            <div class="file-explorer" id="fileExplorer">
-                                <div class="file-item">
-                                    <i class="fas fa-folder"></i>
-                                    <span>src</span>
-                                </div>
-                                <div class="file-item">
-                                    <i class="fas fa-file-code"></i>
-                                    <span>main.py</span>
-                                </div>
-                                <div class="file-item">
-                                    <i class="fas fa-file-code"></i>
-                                    <span>utils.py</span>
-                                </div>
-                                <div class="file-item">
-                                    <i class="fas fa-file-alt"></i>
-                                    <span>README.md</span>
-                                </div>
-                                <div class="file-item">
-                                    <i class="fas fa-file"></i>
-                                    <span>requirements.txt</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="tab-pane fade" id="settingsTab">
-                            <div class="settings-panel">
-                                <div class="settings-group">
-                                    <div class="settings-title">Editor Settings</div>
-                                    <div class="setting-item">
-                                        <label for="fontSize">Font Size</label>
-                                        <select class="form-select form-select-sm" id="fontSize">
-                                            <option>12</option>
-                                            <option selected>14</option>
-                                            <option>16</option>
-                                            <option>18</option>
-                                            <option>20</option>
-                                        </select>
-                                    </div>
-                                    <div class="setting-item">
-                                        <label for="tabSize">Tab Size</label>
-                                        <select class="form-select form-select-sm" id="tabSize">
-                                            <option>2</option>
-                                            <option selected>4</option>
-                                            <option>8</option>
-                                        </select>
-                                    </div>
-                                    <div class="setting-item form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" id="lineNumbers" checked>
-                                        <label class="form-check-label" for="lineNumbers">Show Line Numbers</label>
-                                    </div>
-                                    <div class="setting-item form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" id="autoComplete" checked>
-                                        <label class="form-check-label" for="autoComplete">Enable Auto-complete</label>
-                                    </div>
-                                </div>
-                                <div class="settings-group">
-                                    <div class="settings-title">Execution Settings</div>
-                                    <div class="setting-item">
-                                        <label for="pythonVersion">Python Version</label>
-                                        <select class="form-select form-select-sm" id="pythonVersion">
-                                            <option>3.8</option>
-                                            <option>3.9</option>
-                                            <option>3.10</option>
-                                            <option selected>3.11</option>
-                                        </select>
-                                    </div>
-                                    <div class="setting-item form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" id="autoRun" checked>
-                                        <label class="form-check-label" for="autoRun">Auto-run after save</label>
-                                    </div>
-                                    <div class="setting-item form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" id="showExecutionTime" checked>
-                                        <label class="form-check-label" for="showExecutionTime">Show execution time</label>
-                                    </div>
-                                </div>
-                                <div class="settings-group">
-                                    <div class="settings-title">AI Assistant Settings</div>
-                                    <div class="setting-item">
-                                        <label for="aiModel">AI Model</label>
-                                        <select class="form-select form-select-sm" id="aiModel">
-                                            <option selected>GPT-4 Turbo</option>
-                                            <option>GPT-4</option>
-                                            <option>GPT-3.5 Turbo</option>
-                                            <option>Claude 3</option>
-                                        </select>
-                                    </div>
-                                    <div class="setting-item">
-                                        <label for="apiKey">API Key</label>
-                                        <input type="password" class="form-control form-control-sm" id="apiKey" placeholder="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">
-                                    </div>
-                                    <div class="setting-item form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" id="autoExplain" checked>
-                                        <label class="form-check-label" for="autoExplain">Auto-explain complex code</label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                </div>
+                
+                <div class="resume-item">
+                    <span class="resume-date">2023 - 2024</span>
+                    <h4 class="resume-title">High School</h4>
+                    <p class="resume-location">St. Xaviers High School</p>
+                    <ul class="resume-description">
+                        <li>Completed high school with honors in Science and Mathematics.</li>
+                        <li>Participated in coding competitions and science fairs.</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="resume-column animate-3d from-right">
+                <h3>Experience</h3>
+                
+                <div class="resume-item">
+                    <span class="resume-date">June 2025 - Present</span>
+                    <h4 class="resume-title">Cheif Executive Officer</h4>
+                    <p class="resume-location">RR Industryy</p>
+                    <ul class="resume-description">
+                        <li>🚀 Proudly serving as CEO at RR Industryy, where we transform your business with Stunning websites My role includes:</li>
+                        <li>🎨 web Designing</li>
+                        <li>💻 Managing web development</li>
+                        <li>👥 Leading Business</li>
+                    </ul>
+                </div>
+                
+                <div class="resume-item">
+                    <span class="resume-date">Feb 2025 - Present</span>
+                    <h4 class="resume-title">Chief Technology Officer</h4>
+                    <p class="resume-location">PhoenixAlgo</p>
+                    <ul class="resume-description">
+                        <li>🚀 Proudly serving as CTO at PhoenixAlgo, where we revolutionize education through tech! My role includes:</li>
+                        <li>🎨 Designing visuals</li>
+                        <li>💻 Managing web development</li>
+                        <li>👥 Leading innovative teams</li>
+                        <li>Honored to drive our mission forward!</li>
+                    </ul>
+                </div>
+                
+                <div class="resume-item">
+                    <span class="resume-date">Feb 2025 - Present</span>
+                    <h4 class="resume-title">E-Cell Club</h4>
+                    <p class="resume-location">Operation Management</p>
+                    <ul class="resume-description">
+                        <li>🚀 Leading entrepreneurship events, optimizing resources & mentoring innovators to strengthen the startup ecosystem.</li>
+                        <li>Passionate about empowering future leaders through impactful initiatives.🗽</li>
+                    </ul>
+                </div>
+                
+                <div class="resume-item">
+                    <span class="resume-date">28 June 2025</span>
+                    <h4 class="resume-title">Hackronyx</h4>
+                    <p class="resume-location">volunteer</p>
+                    <ul class="resume-description">
+                        <li>🎓 Hosted a National Level Hackathon</li>
+                        <li>📊 Worked as Media Team Member</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="text-center animate-3d">
+            <a href="#" class="btn btn-primary download-btn">Download Full Resume (PDF)</a>
+        </div>
+    </section>
+
+    <!-- Certificates Section -->
+    <section id="certificates" class="certificates">
+        <h2 class="section-title animate-3d">My Certificates</h2>
+        <p class="animate-3d from-right">Certifications I've earned through my learning journey</p>
+        
+        <div class="certificates-container">
+            <div class="certificate-item animate-3d">
+                <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" alt="C Programming Certificate" class="certificate-img">
+                <div class="certificate-content">
+                    <h4 class="certificate-title">C Programming Certificate</h4>
+                    <p class="certificate-date">C Programming Course</p>
+                    <p>Successfully completed the C Programming Course from Infosys Springboard on December 14, 2024.</p>
+                    <div class="certificate-btns">
+                        <a href="#" class="certificate-btn btn-download">Download</a>
+                        <a href="#" class="certificate-btn btn-view">View</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="certificate-item animate-3d">
+                <img src="https://images.unsplash.com/photo-1624953587687-daf255b6b80a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1074&q=80" alt="Python Crash Course Certificate" class="certificate-img">
+                <div class="certificate-content">
+                    <h4 class="certificate-title">Python Crash Course Certificate</h4>
+                    <p class="certificate-date">Python Crash Course</p>
+                    <p>Completed Google's Crash Course on Python through Coursera, certified on March 18, 2025.</p>
+                    <div class="certificate-btns">
+                        <a href="#" class="certificate-btn btn-download">Download</a>
+                        <a href="#" class="certificate-btn btn-view">View</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="certificate-item animate-3d from-right">
+                <img src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" alt="Introduction to Python Certificate" class="certificate-img">
+                <div class="certificate-content">
+                    <h4 class="certificate-title">Introduction to Python Certificate</h4>
+                    <p class="certificate-date">Introduction to Python</p>
+                    <p>Successfully completed the Introduction to Python course from Infosys Springboard on April 25, 2025.</p>
+                    <div class="certificate-btns">
+                        <a href="#" class="certificate-btn btn-download">Download</a>
+                        <a href="#" class="certificate-btn btn-view">View</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="certificate-item animate-3d from-right">
+                <img src="https://images.unsplash.com/photo-1626785774573-4b799315345d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1171&q=80" alt="Google Gen-ai Certificate" class="certificate-img">
+                <div class="certificate-content">
+                    <h4 class="certificate-title">Google Gen-ai Certificate</h4>
+                    <p class="certificate-date">Google Gen-AI Program</p>
+                    <p>Mastered LLMs, diffusion models & AI tools like ChatGPT & DALL-E. Ready to innovate with GenAI!</p>
+                    <div class="certificate-btns">
+                        <a href="#" class="certificate-btn btn-download">Download</a>
+                        <a href="#" class="certificate-btn btn-view">View</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="certificate-item animate-3d">
+                <img src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" alt="C Programming Certificate" class="certificate-img">
+                <div class="certificate-content">
+                    <h4 class="certificate-title">C Programming Certificate</h4>
+                    <p class="certificate-date">Introduction to AI Course</p>
+                    <p>Successfully completed the Introduction to AI Course from Infosys Springboard on June 8, 2025.</p>
+                    <div class="certificate-btns">
+                        <a href="#" class="certificate-btn btn-download">Download</a>
+                        <a href="#" class="certificate-btn btn-view">View</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="certificate-item animate-3d">
+                <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" alt="AWS Solution Architecture Certificate" class="certificate-img">
+                <div class="certificate-content">
+                    <h4 class="certificate-title">AWS Solution Architecture Certificate</h4>
+                    <p class="certificate-date">AWS Solution Architecture</p>
+                    <p>Completed practical tasks in designing scalable hosting architectures through Forage job simulation in March 2025.</p>
+                    <div class="certificate-btns">
+                        <a href="#" class="certificate-btn btn-download">Download</a>
+                        <a href="#" class="certificate-btn btn-view">View</a>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    </section>
 
-    <div class="toast-container">
-        <div class="toast" id="notificationToast">
-            <div class="toast-header">
-                <strong class="me-auto">Notification</strong>
-                <small>Just now</small>
-                <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+    <!-- Projects Section -->
+    <section id="projects" class="projects">
+        <h2 class="section-title animate-3d">My Projects</h2>
+        <p class="animate-3d from-right">Some of my recent work and personal projects</p>
+        
+        <div class="projects-container">
+            <div class="project-item animate-3d">
+                <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" alt="Food Land Restaurant" class="project-img">
+                <div class="project-content">
+                    <h4 class="project-title">Food Land Restaurant</h4>
+                    <p>A responsive and elegant restaurant website featuring menu, reservation system, gallery, and contact information.</p>
+                    <div class="project-tech">
+                        <span class="tech-tag">HTML</span>
+                        <span class="tech-tag">CSS</span>
+                        <span class="tech-tag">JavaScript</span>
+                    </div>
+                    <div class="project-btns">
+                        <a href="#" class="btn btn-primary">Live Demo</a>
+                    </div>
+                </div>
             </div>
-            <div class="toast-body">
-                Welcome to PyAI Runner!
+            
+            <div class="project-item animate-3d">
+                <img src="https://images.unsplash.com/photo-1588072432836-e10032774350?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1172&q=80" alt="WhiteBoard Education" class="project-img">
+                <div class="project-content">
+                    <h4 class="project-title">WhiteBoard Education</h4>
+                    <p>A responsive educational platform built with HTML, CSS, and JavaScript that provides interactive learning experiences for students.</p>
+                    <div class="project-tech">
+                        <span class="tech-tag">HTML</span>
+                        <span class="tech-tag">React</span>
+                        <span class="tech-tag">CSS</span>
+                        <span class="tech-tag">JavaScript</span>
+                    </div>
+                    <div class="project-btns">
+                        <a href="#" class="btn btn-primary">Live Demo</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="project-item animate-3d from-right">
+                <img src="https://images.unsplash.com/photo-1571902943202-507ec2618e8f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1075&q=80" alt="FitFlex Gym Website" class="project-img">
+                <div class="project-content">
+                    <h4 class="project-title">Lakudkar Gym Website</h4>
+                    <p>A modern gym website with membership management, class scheduling, and trainer booking functionality built with Html, React and Node.js.</p>
+                    <div class="project-tech">
+                        <span class="tech-tag">HTML</span>
+                        <span class="tech-tag">React</span>
+                        <span class="tech-tag">Node.js</span>
+                        <span class="tech-tag">CSS</span>
+                    </div>
+                    <div class="project-btns">
+                        <a href="#" class="btn btn-primary">Live Demo</a>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
+    </section>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.4.0/axios.min.js"></script>
-    <script>
-        // Initialize components
-        document.addEventListener('DOMContentLoaded', function() {
-            // Initialize Bootstrap components
-            const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-            tooltipTriggerList.map(function (tooltipTriggerEl) {
-                return new bootstrap.Tooltip(tooltipTriggerEl);
-            });
+    <!-- Contact Section -->
+    <section id="contact" class="contact">
+        <h2 class="section-title animate-3d">Get In Touch</h2>
+        <p class="animate-3d from-right">Feel free to reach out for collaborations or just a friendly hello 👋</p>
+        
+        <div class="contact-container">
+            <div class="contact-info animate-3d">
+                <h3>Let's Connect</h3>
+                <p>I'm always open to discussing new opportunities, learning resources, or potential collaborations. Feel free to reach out!</p>
+                
+                <div class="contact-item">
+                    <div class="contact-icon">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <div class="contact-text">
+                        <h4>Email</h4>
+                        <a href="mailto:riteshrathod016@gmail.com">riteshrathod016@gmail.com</a>
+                    </div>
+                </div>
+                
+                <div class="contact-item">
+                    <div class="contact-icon">
+                        <i class="fas fa-phone"></i>
+                    </div>
+                    <div class="contact-text">
+                        <h4>Phone</h4>
+                        <a href="tel:+917721874530">+91 7721874530</a>
+                    </div>
+                </div>
+                
+                <div class="contact-item">
+                    <div class="contact-icon">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                    <div class="contact-text">
+                        <h4>Location</h4>
+                        <p>Nagpur, Maharashtra, India</p>
+                    </div>
+                </div>
+                
+                <h3 style="margin-top: 2rem;">Follow Me</h3>
+                <div class="social-links">
+                    <a href="#" class="social-link"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-github"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
             
-            const toastEl = document.getElementById('notificationToast');
-            const toast = new bootstrap.Toast(toastEl);
-            toast.show();
+            <div class="contact-form animate-3d from-right">
+                <form>
+                    <div class="form-group">
+                        <label for="name">Your Name</label>
+                        <input type="text" id="name" class="form-control" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Your Email</label>
+                        <input type="email" id="email" class="form-control" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" id="phone" class="form-control">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="message">Message</label>
+                        <textarea id="message" class="form-control" rows="5" required>Your message here...</textarea>
+                    </div>
+                    
+                    <button type="submit" class="submit-btn">Send Message</button>
+                </form>
+            </div>
+        </div>
+    </section>
 
-            // Initialize tabs
-            const tabEls = document.querySelectorAll('a[data-bs-toggle="tab"]');
-            tabEls.forEach(tabEl => {
-                tabEl.addEventListener('shown.bs.tab', function (event) {
-                    // Handle tab change if needed
-                });
-            });
+    <!-- Footer -->
+    <footer>
+        <p class="footer-text">© 2025 Ritesh Rathod. All rights reserved.</p>
+        <p class="footer-credit">Designed with <i class="fas fa-heart" style="color: var(--primary);"></i> by <a href="#">Ritesh Rathod</a></p>
+    </footer>
 
-            // Initialize editor functionality
-            setupEditor();
-            setupAI();
-            setupFileHandling();
-            setupExecution();
-            setupSettings();
+    <!-- Back to Top Button -->
+    <a href="#" class="back-to-top">
+        <i class="fas fa-arrow-up"></i>
+    </a>
+
+    <script>
+        // Netflix Intro Animation
+        document.addEventListener('DOMContentLoaded', function() {
+            // Remove intro after animation completes
+            setTimeout(function() {
+                document.querySelector('.netflix-intro').remove();
+            }, 3000);
         });
 
-        // Editor functionality
-        function setupEditor() {
-            const editor = document.getElementById('editor');
-            const output = document.getElementById('output');
-            const runButton = document.getElementById('runButton');
-            const editorRun = document.getElementById('editorRun');
-            const editorSave = document.getElementById('editorSave');
-            const editorFormat = document.getElementById('editorFormat');
-            const inputPrompt = document.getElementById('inputPrompt');
-            const userInput = document.getElementById('userInput');
-            const submitInput = document.getElementById('submitInput');
-            
-            let inputResolver;
-            let currentInputPromise;
+        // Mobile Menu Toggle
+        const hamburger = document.querySelector('.hamburger');
+        const navLinks = document.querySelector('.nav-links');
 
-            // Track cursor position
-            editor.addEventListener('keyup', updateCursorPosition);
-            editor.addEventListener('click', updateCursorPosition);
-            
-            function updateCursorPosition() {
-                const text = editor.value;
-                const cursorPos = editor.selectionStart;
-                
-                // Calculate line number
-                const lines = text.substring(0, cursorPos).split('\n');
-                const lineNumber = lines.length;
-                const columnNumber = lines[lines.length - 1].length + 1;
-                
-                // Update status bar
-                document.querySelector('.status-item:nth-child(2) span').textContent = `Ln ${lineNumber}, Col ${columnNumber}`;
-            }
+        hamburger.addEventListener('click', function() {
+            navLinks.classList.toggle('active');
+            hamburger.innerHTML = navLinks.classList.contains('active') ? 
+                '<i class="fas fa-times"></i>' : '<i class="fas fa-bars"></i>';
+        });
 
-            // Run code
-            function runCode() {
-                const code = editor.value;
-                output.innerHTML = '<span class="output-info">Executing code...</span>';
-                
-                // Mock execution - in a real app, this would call a backend API
-                setTimeout(() => {
-                    mockExecutePython(code);
-                }, 500);
-            }
-
-            // Mock Python execution
-            function mockExecutePython(code) {
-                output.innerHTML = '';
-                
-                try {
-                    // Check for input() calls
-                    if (code.includes('input(')) {
-                        const inputMatches = code.match(/input\(([^)]*)\)/g);
-                        if (inputMatches) {
-                            handleInput(inputMatches[0]);
-                            return;
-                        }
-                    }
-                    
-                    // Mock output for demo purposes
-                    const mockOutput = `First 10 Fibonacci numbers:
-Fibonacci(0) = 0
-Fibonacci(1) = 1
-Fibonacci(2) = 1
-Fibonacci(3) = 2
-Fibonacci(4) = 3
-Fibonacci(5) = 5
-Fibonacci(6) = 8
-Fibonacci(7) = 13
-Fibonacci(8) = 21
-Fibonacci(9) = 34
-What's your name? `;
-                    
-                    output.innerHTML = mockOutput;
-                    
-                    // Show input prompt for the name
-                    document.getElementById('promptText').textContent = "What's your name?";
-                    inputPrompt.style.display = 'block';
-                    
-                } catch (error) {
-                    output.innerHTML = `<span class="output-error">Error: ${error.message}</span>`;
-                }
-            }
-
-            // Handle input() calls
-            function handleInput(promptText) {
-                const cleanPrompt = promptText.replace(/input\((['"]?)(.*?)\1\)/, '$2') || 'Enter input:';
-                document.getElementById('promptText').textContent = cleanPrompt;
-                inputPrompt.style.display = 'block';
-                
-                currentInputPromise = new Promise(resolve => {
-                    inputResolver = resolve;
-                });
-            }
-
-            // Submit user input
-            function submitUserInput() {
-                const inputValue = userInput.value;
-                inputPrompt.style.display = 'none';
-                userInput.value = '';
-                
-                if (inputResolver) {
-                    inputResolver(inputValue);
-                    output.innerHTML += `${inputValue}\nHello, ${inputValue}! Welcome to Python programming.\n\n<span class="output-success">Program finished with exit code 0</span>`;
-                }
-            }
-
-            // Format code
-            function formatCode() {
-                // In a real app, this would use a formatter like autopep8 or black
-                // For demo, we just add proper indentation
-                const code = editor.value;
-                const lines = code.split('\n');
-                let indent = 0;
-                let formatted = [];
-                
-                for (let line of lines) {
-                    line = line.trim();
-                    if (line.endsWith(':')) {
-                        formatted.push(' '.repeat(indent * 4) + line);
-                        indent++;
-                    } else if (line.startsWith('return') || line.startsWith('pass') || line.startsWith('break') || line.startsWith('continue')) {
-                        indent--;
-                        formatted.push(' '.repeat(indent * 4) + line);
-                    } else {
-                        formatted.push(' '.repeat(indent * 4) + line);
-                    }
-                }
-                
-                editor.value = formatted.join('\n');
-                showNotification('Code formatted successfully');
-            }
-
-            // Show notification
-            function showNotification(message) {
-                const toastBody = document.querySelector('.toast-body');
-                toastBody.textContent = message;
-                
-                const toast = new bootstrap.Toast(document.getElementById('notificationToast'));
-                toast.show();
-            }
-
-            // Event listeners
-            runButton.addEventListener('click', runCode);
-            editorRun.addEventListener('click', runCode);
-            editorSave.addEventListener('click', () => showNotification('Code saved (mock)'));
-            editorFormat.addEventListener('click', formatCode);
-            submitInput.addEventListener('click', submitUserInput);
-            userInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') submitUserInput();
+        // Close mobile menu when clicking a link
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                navLinks.classList.remove('active');
+                hamburger.innerHTML = '<i class="fas fa-bars"></i>';
             });
+        });
+
+        // Scroll Reveal Animation
+        const animateElements = document.querySelectorAll('.animate-3d');
+
+        function checkScroll() {
+            animateElements.forEach(element => {
+                const elementTop = element.getBoundingClientRect().top;
+                const windowHeight = window.innerHeight;
+                
+                if (elementTop < windowHeight - 100) {
+                    element.classList.add('active');
+                }
+            });
+
+            // Back to top button
+            if (window.pageYOffset > 300) {
+                document.querySelector('.back-to-top').classList.add('active');
+            } else {
+                document.querySelector('.back-to-top').classList.remove('active');
+            }
         }
 
-        // AI Assistant functionality
-        function setupAI() {
-            const aiExplain = document.getElementById('aiExplain');
-            const aiOptimize = document.getElementById('aiOptimize');
-            const aiDebug = document.getElementById('aiDebug');
-            const aiGenerate = document.getElementById('aiGenerate');
-            const aiConvert = document.getElementById('aiConvert');
-            const aiConversation = document.createElement('div');
-            aiConversation.className = 'ai-conversation';
-            document.getElementById('outputTab').appendChild(aiConversation);
-            
-            // Mock AI responses
-            const aiResponses = {
-                explain: `The Fibonacci sequence is a series of numbers where each number is the sum of the two preceding ones. In this code:
+        window.addEventListener('scroll', checkScroll);
+        window.addEventListener('load', checkScroll);
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
                 
-1. The fibonacci() function uses recursion to calculate the nth Fibonacci number.
-2. The base case is when n is 0 or 1, returning n directly.
-3. For larger numbers, it calls itself with n-1 and n-2 and sums the results.
-4. The loop prints the first 10 Fibonacci numbers by calling fibonacci(i) for i from 0 to 9.
-
-Recursion is elegant but can be inefficient for large n due to repeated calculations.`,
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
                 
-                optimize: `Here's an optimized version using memoization to avoid redundant calculations:
-
-<pre>from functools import lru_cache
-
-@lru_cache(maxsize=None)
-def fibonacci(n):
-    """Return the nth Fibonacci number with memoization."""
-    if n <= 1:
-        return n
-    return fibonacci(n-1) + fibonacci(n-2)</pre>
-
-This version:
-1. Uses Python's built-in lru_cache decorator to cache results
-2. Dramatically improves performance for larger n
-3. Maintains the same simple recursive approach`,
-                
-                debug: `The code appears correct, but here are some potential improvements:
-
-1. Add input validation for negative numbers
-2. Consider adding a docstring explaining the function's purpose
-3. For very large n, recursion might hit Python's recursion limit
-
-Example improvement:
-<pre>def fibonacci(n):
-    """Return the nth Fibonacci number.
-    Args:
-        n: non-negative integer
-    Raises:
-        ValueError: if n is negative
-    """
-    if n < 0:
-        raise ValueError("n must be non-negative")
-    if n <= 1:
-        return n
-    return fibonacci(n-1) + fibonacci(n-2)</pre>`,
-                
-                generate: `Here's a Python function to calculate factorial using recursion:
-
-<pre>def factorial(n):
-    """Calculate factorial of n recursively."""
-    if n == 0:
-        return 1
-    return n * factorial(n - 1)
-
-# Example usage
-print(factorial(5))  # Output: 120</pre>
-
-Key points:
-1. Base case: factorial(0) is 1
-2. Recursive case: n * factorial(n-1)
-3. Works for non-negative integers`,
-                
-                convert: `Here's the Fibonacci function converted to an iterative approach:
-
-<pre>def fibonacci(n):
-    """Return the nth Fibonacci number iteratively."""
-    a, b = 0, 1
-    for _ in range(n):
-        a, b = b, a + b
-    return a</pre>
-
-Advantages:
-1. No recursion limit issues
-2. More memory efficient
-3. Faster for large n
-4. Same result as recursive version`
-            };
-            
-            // Add message to AI conversation
-            function addAIMessage(role, content) {
-                const messageDiv = document.createElement('div');
-                messageDiv.className = `ai-message ai-${role}`;
-                messageDiv.innerHTML = content;
-                aiConversation.appendChild(messageDiv);
-                aiConversation.scrollTop = aiConversation.scrollHeight;
-            }
-            
-            // Handle AI actions
-            function handleAIAction(action) {
-                const code = document.getElementById('editor').value;
-                
-                // Show loading
-                addAIMessage('bot', '<i class="fas fa-spinner spinner"></i> Thinking...');
-                
-                // Simulate API call delay
-                setTimeout(() => {
-                    // Remove loading
-                    aiConversation.removeChild(aiConversation.lastChild);
-                    
-                    // Add user message
-                    addAIMessage('user', `<pre>${code}</pre>`);
-                    
-                    // Add AI response
-                    addAIMessage('bot', aiResponses[action].replace(/<pre>/g, '<pre class="hljs">'));
-                    
-                    // Highlight code in response
-                    document.querySelectorAll('.ai-conversation pre code').forEach((block) => {
-                        hljs.highlightElement(block);
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
                     });
-                }, 1500);
-            }
-            
-            // Event listeners
-            aiExplain.addEventListener('click', () => handleAIAction('explain'));
-            aiOptimize.addEventListener('click', () => handleAIAction('optimize'));
-            aiDebug.addEventListener('click', () => handleAIAction('debug'));
-            aiGenerate.addEventListener('click', () => handleAIAction('generate'));
-            aiConvert.addEventListener('click', () => handleAIAction('convert'));
-        }
-
-        // File handling functionality
-        function setupFileHandling() {
-            const newFile = document.getElementById('newFile');
-            const openFile = document.getElementById('openFile');
-            const saveFile = document.getElementById('saveFile');
-            const saveAsFile = document.getElementById('saveAsFile');
-            const exportPDF = document.getElementById('exportPDF');
-            const exportHTML = document.getElementById('exportHTML');
-            
-            // Mock file operations
-            newFile.addEventListener('click', () => {
-                document.getElementById('editor').value = '# New Python script\nprint("Hello, World!")';
-                showNotification('New file created');
-            });
-            
-            openFile.addEventListener('click', () => {
-                showNotification('File open dialog would appear here');
-            });
-            
-            saveFile.addEventListener('click', () => {
-                showNotification('File saved successfully');
-            });
-            
-            saveAsFile.addEventListener('click', () => {
-                showNotification('Save as dialog would appear here');
-            });
-            
-            exportPDF.addEventListener('click', () => {
-                showNotification('Export to PDF would generate a PDF file');
-            });
-            
-            exportHTML.addEventListener('click', () => {
-                showNotification('Export to HTML would generate an HTML file');
-            });
-        }
-
-        // Code execution functionality
-        function setupExecution() {
-            const debugCode = document.getElementById('debugCode');
-            const stopExecution = document.getElementById('stopExecution');
-            const runSelection = document.getElementById('runSelection');
-            
-            // Mock debugger
-            debugCode.addEventListener('click', () => {
-                showNotification('Debugger started (mock)');
-                document.getElementById('debugConsole').innerHTML = `
-                    <div class="alert alert-success">
-                        Debug session active. Set breakpoints and step through code.
-                    </div>
-                    <div class="card mt-3">
-                        <div class="card-header">
-                            Variables
-                        </div>
-                        <div class="card-body">
-                            <pre>n = 5
-i = 3
-result = 3</pre>
-                        </div>
-                    </div>
-                    <div class="card mt-3">
-                        <div class="card-header">
-                            Call Stack
-                        </div>
-                        <div class="card-body">
-                            <pre>fibonacci(5)
-fibonacci(4)
-fibonacci(3)</pre>
-                        </div>
-                    </div>`;
-            });
-            
-            stopExecution.addEventListener('click', () => {
-                showNotification('Execution stopped');
-                document.getElementById('output').innerHTML = '<span class="output-warning">Execution stopped by user</span>';
-            });
-            
-            runSelection.addEventListener('click', () => {
-                const editor = document.getElementById('editor');
-                const selectedText = editor.value.substring(editor.selectionStart, editor.selectionEnd);
-                
-                if (selectedText.trim() === '') {
-                    showNotification('No code selected');
-                } else {
-                    document.getElementById('output').innerHTML = `<span class="output-info">Executing selected code...</span><pre>${selectedText}</pre>`;
-                    setTimeout(() => {
-                        document.getElementById('output').innerHTML += '<span class="output-success">Selection executed</span>';
-                    }, 1000);
                 }
             });
+        });
+
+        // 3D Image Animation on Scroll
+        const heroImage = document.querySelector('.hero-image');
+        const floatingImg = document.querySelector('.floating-img');
+
+        window.addEventListener('scroll', function() {
+            const scrollValue = window.scrollY;
+            floatingImg.style.transform = `rotateY(${scrollValue / 20}deg) rotateX(${-scrollValue / 20}deg)`;
+        });
+
+        // Animate progress bars when they come into view
+        const progressBars = document.querySelectorAll('.progress');
+
+        function animateProgressBars() {
+            progressBars.forEach(bar => {
+                const width = bar.style.width;
+                bar.style.width = '0';
+                setTimeout(() => {
+                    bar.style.width = width;
+                }, 100);
+            });
         }
 
-        // Settings functionality
-        function setupSettings() {
-            const toggleTheme = document.getElementById('toggleTheme');
-            const toggleFullscreen = document.getElementById('toggleFullscreen');
-            const fontSize = document.getElementById('fontSize');
-            const tabSize = document.getElementById('tabSize');
-            const lineNumbers = document.getElementById('lineNumbers');
-            const pythonVersion = document.getElementById('pythonVersion');
-            
-            // Theme toggle
-            let darkMode = true;
-            toggleTheme.addEventListener('click', () => {
-                darkMode = !darkMode;
-                document.body.style.backgroundColor = darkMode ? '#f5f7fa' : '#1a1a2e';
-                showNotification(darkMode ? 'Switched to light theme' : 'Switched to dark theme');
-            });
-            
-            // Fullscreen toggle
-            toggleFullscreen.addEventListener('click', () => {
-                if (!document.fullscreenElement) {
-                    document.documentElement.requestFullscreen();
-                } else {
-                    if (document.exitFullscreen) {
-                        document.exitFullscreen();
-                    }
+        const skillsSection = document.querySelector('#about');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    animateProgressBars();
+                    observer.unobserve(entry.target);
                 }
             });
-            
-            // Settings changes
-            fontSize.addEventListener('change', () => {
-                document.getElementById('editor').style.fontSize = `${fontSize.value}px`;
-                showNotification(`Font size set to ${fontSize.value}px`);
-            });
-            
-            tabSize.addEventListener('change', () => {
-                showNotification(`Tab size set to ${tabSize.value} spaces`);
-            });
-            
-            lineNumbers.addEventListener('change', () => {
-                showNotification(`Line numbers ${lineNumbers.checked ? 'enabled' : 'disabled'}`);
-            });
-            
-            pythonVersion.addEventListener('change', () => {
-                showNotification(`Python version set to ${pythonVersion.value}`);
-            });
-        }
+        }, { threshold: 0.5 });
+
+        observer.observe(skillsSection);
     </script>
 </body>
 </html>
